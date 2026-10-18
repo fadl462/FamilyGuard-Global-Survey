@@ -11,3 +11,6 @@
 /* Validation hints belong to the question they refer to, never at the top of the step. */
 .question-notice{display:block;margin:10px 0 12px;padding:10px 12px;border:1px solid #ffd5df;border-radius:9px;background:#fff2f4;color:#a52e4e;font-size:12px;line-height:1.5;scroll-margin:24px}
 .question-notice + .scale-row,.question-notice + .option-grid,.question-notice + .choice-grid{margin-top:8px}
+
+/* Stable top alignment: keep the left-panel introduction near the logo instead of bottom-anchored. */
+@media (min-width: 761px){.hero-content{margin:0 auto 0 0}.hero-panel{justify-content:flex-start}.hero-panel .eyebrow{margin-top:0}}
