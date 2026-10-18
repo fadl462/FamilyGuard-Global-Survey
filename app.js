@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 function readSession(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"null")}catch{return null}}
 function writeSession(extra={}){try{const prior=readSession()||{};sessionStorage.setItem(STATE_KEY,JSON.stringify({...prior,step:current,answers:collectFormState(),scrollY:window.scrollY,...extra}))}catch{/* Continue even when browser storage is unavailable. */}}
 function collectFormState(){const state={};form.querySelectorAll("[name]").forEach(el=>{if(el.type==="checkbox"||el.type==="radio"){if(el.checked)(state[el.name]??=[]).push(el.value)}else state[el.name]=el.value});return state}
-function restoreFormState(state){if(!state?.answers)return;form.querySelectorAll("[name]").forEach(el=>{const value=state.answers[el.name];if(el.type==="checkbox"||el.type==="radio")el.checked=Array.isArray(value)&&value.includes(el.value);else if(value!==undefined)el.value=value});$("reportFields").classList.toggle("hidden",!$("wantReport").checked);$("testingFields").classList.toggle("hidden",!$("wantTesting").checked);const no=selected("guardian")[0]==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no))}
+function restoreFormState(state){if(!state?.answers)return;form.querySelectorAll("[name]").forEach(el=>{const value=state.answers[el.name];if(el.type==="checkbox"||el.type==="radio")el.checked=Array.isArray(value)&&value.includes(el.value);else if(value!==undefined)el.value=value});[...new Set([...form.querySelectorAll('input[type="checkbox"][name]')].map(el=>el.name))].forEach(normalizeExclusiveAnswers);$("reportFields").classList.toggle("hidden",!$("wantReport").checked);$("testingFields").classList.toggle("hidden",!$("wantTesting").checked);const no=selected("guardian")[0]==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no))}
 function restoreTerminal(state){if(state?.terminal==="ineligible"){showEligibilityClosing();return true}if(state?.terminal==="submitted"){form.classList.add("hidden");document.querySelector(".card-heading").classList.add("hidden");document.querySelector(".progress-wrap").classList.add("hidden");$("successPanel").classList.remove("hidden");$("successPanel").querySelector(".step-kicker").textContent="RESPONSE RECEIVED";$("successPanel").querySelector("h2").textContent="Thank you for being part of this.";$("successPanel").querySelector("p").textContent="Your perspective helps us understand what families around the world need to feel safer online.";$("successPanel").querySelector(".success-stats").classList.remove("hidden");$("contactResult").classList.remove("hidden");$("contactResult").textContent=state.contactMessage||"Your response was submitted.";$("finishBtn").textContent="You may close this tab";$("finishBtn").disabled=true;return true}return false}
 function setStep(n,shouldScroll=true){current=Math.max(0,Math.min(steps.length-1,n));steps.forEach((s,i)=>s.classList.toggle("active",i===current));indicators.forEach((s,i)=>{s.classList.toggle("active",i===current);s.classList.toggle("done",i<current)});$("progressFill").style.width=(current/(steps.length-1)*100)+"%";$("stepKicker").textContent=`STEP ${current+1} OF ${steps.length}`;$("sectionTitle").textContent=titleList[current];$("sectionSubtitle").textContent=subtitles[current];$("prevBtn").classList.toggle("hidden",current===0);$("nextBtn").classList.toggle("hidden",current===steps.length-1);$("submitBtn").classList.toggle("hidden",current!==steps.length-1);notice.classList.add("hidden");clearQuestionErrors();if(shouldScroll)document.querySelector(".survey-area").scrollIntoView({behavior:"smooth",block:"start"});writeSession();}
 function selected(name){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)}
@@ -41,7 +41,37 @@ form.addEventListener("change",e=>{const related=e.target.closest(".question, .p
 form.addEventListener("input",()=>writeSession());
 $("wantReport").addEventListener("change",()=>$("reportFields").classList.toggle("hidden",!$("wantReport").checked));
 $("wantTesting").addEventListener("change",()=>$("testingFields").classList.toggle("hidden",!$("wantTesting").checked));
-form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEventListener("change",()=>{const limits={concerns:3,features:3,barriers:2,purchase_factors:2};if(limits[input.name]){const checked=form.querySelectorAll(`[name="${input.name}"]:checked`);if(checked.length>limits[input.name]){input.checked=false;showQuestionError(input.name,`Please select no more than ${limits[input.name]} options for this question.`)}}}));
+// Exclusive checkbox answers (for example, “None of these”) cannot be combined
+// with any other answer in the same multi-select question. Apply this rule
+// consistently to every checkbox group containing a recognized exclusive choice.
+const exclusiveAnswer = value => /^(none of these|none of the above|none|few or no major concerns|no concerns)$/i.test(String(value||'').trim());
+function normalizeExclusiveAnswers(groupName){
+  const boxes=[...form.querySelectorAll(`input[type="checkbox"][name="${groupName}"]`)];
+  const exclusive=boxes.find(box=>exclusiveAnswer(box.value));
+  if(!exclusive)return;
+  if(exclusive.checked)boxes.forEach(box=>{if(box!==exclusive)box.checked=false;});
+}
+form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEventListener("change",()=>{
+  const group=[...form.querySelectorAll(`input[type="checkbox"][name="${input.name}"]`)];
+  const exclusive=group.find(box=>exclusiveAnswer(box.value));
+  if(exclusive){
+    const otherChecked=group.some(box=>box!==exclusive&&box.checked);
+    if(input===exclusive&&exclusive.checked){
+      group.forEach(box=>{if(box!==exclusive)box.checked=false;});
+      showQuestionError(input.name,'“None of these” cannot be selected with other options. Your other selections have been cleared.');
+    }else if(input!==exclusive&&input.checked&&exclusive.checked){
+      exclusive.checked=false;
+      showQuestionError(input.name,'“None of these” cannot be selected with other options. It has been unselected so you can choose this answer.');
+    }else if(input!==exclusive&&input.checked&&otherChecked&&exclusive.checked){
+      exclusive.checked=false;
+      showQuestionError(input.name,'“None of these” cannot be selected with other options. It has been unselected so you can choose this answer.');
+    }
+  }
+  const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
+  if(limits[input.name]){const checked=form.querySelectorAll(`[name="${input.name}"]:checked`);if(checked.length>limits[input.name]){input.checked=false;showQuestionError(input.name,`Please select no more than ${limits[input.name]} options for this question.`)}}
+  normalizeExclusiveAnswers(input.name);
+  writeSession();
+}));
 function payload(){const data={};const names=new Set([...form.querySelectorAll("[name]")].map(x=>x.name));for(const name of names){const fields=[...form.querySelectorAll(`[name="${name}"]`)];if(fields[0]?.type==="checkbox")data[name]=selected(name);else if(fields[0]?.type==="radio")data[name]=selected(name)[0]||"";else data[name]=fields[0]?.value||""}return data}
 $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({answers:payload(),consent:true})});const result=await res.json().catch(()=>({}));if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
   const contactTasks=[];
