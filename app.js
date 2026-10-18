@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 function readSession(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"null")}catch{return null}}
 function writeSession(extra={}){try{const prior=readSession()||{};sessionStorage.setItem(STATE_KEY,JSON.stringify({...prior,step:current,answers:collectFormState(),scrollY:window.scrollY,...extra}))}catch{/* Continue even when browser storage is unavailable. */}}
 function collectFormState(){const state={};form.querySelectorAll("[name]").forEach(el=>{if(el.type==="checkbox"||el.type==="radio"){if(el.checked)(state[el.name]??=[]).push(el.value)}else state[el.name]=el.value});return state}
-function restoreFormState(state){if(!state?.answers)return;form.querySelectorAll("[name]").forEach(el=>{const value=state.answers[el.name];if(el.type==="checkbox"||el.type==="radio")el.checked=Array.isArray(value)&&value.includes(el.value);else if(value!==undefined)el.value=value});[...new Set([...form.querySelectorAll('input[type="checkbox"][name]')].map(el=>el.name))].forEach(normalizeExclusiveAnswers);$("reportFields").classList.toggle("hidden",!$("wantReport").checked);$("testingFields").classList.toggle("hidden",!$("wantTesting").checked);const no=selected("guardian")[0]==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no))}
+function restoreFormState(state){if(!state?.answers)return;form.querySelectorAll("[name]").forEach(el=>{const value=state.answers[el.name];if(el.type==="checkbox"||el.type==="radio")el.checked=Array.isArray(value)&&value.includes(el.value);else if(value!==undefined)el.value=value});[...new Set([...form.querySelectorAll('input[type="checkbox"][name]')].map(el=>el.name))].forEach(normalizeExclusiveAnswers);$("reportFields").classList.toggle("hidden",!$("wantReport").checked);$("testingFields").classList.toggle("hidden",!$("wantTesting").checked);const no=selected("guardian")[0]==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no));syncOtherFields()}
 function restoreTerminal(state){if(state?.terminal==="ineligible"){showEligibilityClosing();return true}if(state?.terminal==="submitted"){form.classList.add("hidden");document.querySelector(".card-heading").classList.add("hidden");document.querySelector(".progress-wrap").classList.add("hidden");$("successPanel").classList.remove("hidden");$("successPanel").querySelector(".step-kicker").textContent="RESPONSE RECEIVED";$("successPanel").querySelector("h2").textContent="Thank you for being part of this.";$("successPanel").querySelector("p").textContent="Your perspective helps us understand what families around the world need to feel safer online.";$("successPanel").querySelector(".success-stats").classList.remove("hidden");$("contactResult").classList.remove("hidden");$("contactResult").textContent=state.contactMessage||"Your response was submitted.";$("finishBtn").textContent="You may close this tab";$("finishBtn").disabled=true;return true}return false}
 function setStep(n,shouldScroll=true){current=Math.max(0,Math.min(steps.length-1,n));steps.forEach((s,i)=>s.classList.toggle("active",i===current));indicators.forEach((s,i)=>{s.classList.toggle("active",i===current);s.classList.toggle("done",i<current)});$("progressFill").style.width=(current/(steps.length-1)*100)+"%";$("stepKicker").textContent=`STEP ${current+1} OF ${steps.length}`;$("sectionTitle").textContent=titleList[current];$("sectionSubtitle").textContent=subtitles[current];$("prevBtn").classList.toggle("hidden",current===0);$("nextBtn").classList.toggle("hidden",current===steps.length-1);$("submitBtn").classList.toggle("hidden",current!==steps.length-1);notice.classList.add("hidden");clearQuestionErrors();if(shouldScroll)document.querySelector(".survey-area").scrollIntoView({behavior:"smooth",block:"start"});writeSession();}
 function selected(name){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)}
@@ -28,7 +28,48 @@ function showEligibilityClosing(){
   $("contactResult").classList.add("hidden");
   $("finishBtn").textContent="Close";
 }
-function validateStep(){notice.classList.add("hidden");if(current===0){if(!$("country").value){showQuestionError("country","Please select your country.");return false}if(!selected("guardian").length){showQuestionError("guardian","Please tell us whether you are a parent or legal guardian.");return false}}
+function setupOtherFields(){
+  form.querySelectorAll('input[type="checkbox"][value="Other"][name]').forEach(box=>{
+    const groupName=box.name;
+    const fieldName=`other_${groupName}`;
+    let wrapper=form.querySelector(`[data-other-for="${groupName}"]`);
+    if(!wrapper){
+      wrapper=document.createElement("div");
+      wrapper.className="other-specify hidden";
+      wrapper.dataset.otherFor=groupName;
+      const label=document.createElement("label");
+      label.className="other-specify-label";
+      label.htmlFor=fieldName;
+      label.textContent="Please specify:";
+      const input=document.createElement("input");
+      input.type="text";
+      input.id=fieldName;
+      input.name=fieldName;
+      input.placeholder="Tell us what you mean by Other";
+      input.maxLength=300;
+      input.autocomplete="off";
+      input.setAttribute("aria-label",`Please specify other ${groupName.replaceAll("_"," ")}`);
+      wrapper.append(label,input);
+      box.closest(".check-option").insertAdjacentElement("afterend",wrapper);
+      input.addEventListener("input",writeSession);
+    }
+    const sync=()=>wrapper.classList.toggle("hidden",!box.checked);
+    box.addEventListener("change",sync);
+    sync();
+  });
+}
+function syncOtherFields(){
+  form.querySelectorAll('[data-other-for]').forEach(wrapper=>{
+    const group=wrapper.dataset.otherFor;
+    const checked=form.querySelector(`input[type="checkbox"][name="${group}"][value="Other"]`)?.checked;
+    wrapper.classList.toggle("hidden",!checked);
+  });
+}
+function validateStep(){notice.classList.add("hidden");
+const step=steps[current];
+const selectedOther=[...step.querySelectorAll('input[type="checkbox"][value="Other"][name]:checked')];
+for(const box of selectedOther){const field=form.querySelector(`[name="other_${box.name}"]`);if(field&&!field.value.trim()){showQuestionError(box.name,"Please specify what you mean by “Other” before continuing.");field.focus({preventScroll:true});return false}}
+if(current===0){if(!$("country").value){showQuestionError("country","Please select your country.");return false}if(!selected("guardian").length){showQuestionError("guardian","Please tell us whether you are a parent or legal guardian.");return false}}
 if(current===1){if(!selected("concern_level").length){showQuestionError("concern_level","Please rate your level of concern.");return false}if(!selected("concerns").length){showQuestionError("concerns","Please select at least one concern, or choose “Few or no major concerns”.");return false}if(selected("concerns").length>3){showQuestionError("concerns","Please select up to three concerns.");return false}}
 if(current===2&&!selected("satisfaction").length){showQuestionError("satisfaction","Please rate your satisfaction or choose Not applicable.");return false}
 if(current===3){if(!selected("usefulness").length||!selected("approach").length){showQuestionError(!selected("usefulness").length?"usefulness":"approach","Please answer this required question.");return false}if(!selected("features").length||selected("features").length>3){showQuestionError("features","Please select between one and three features.");return false}if(!selected("barriers").length||selected("barriers").length>2){showQuestionError("barriers","Please select one or two concerns about using the product.");return false}}
@@ -82,6 +123,8 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
   const resultMsg=$("contactResult");if(!contactTasks.length){resultMsg.textContent="No follow-up email preferences were selected. Your survey response was submitted without an email address.";}else if(failures.length){resultMsg.textContent="Your survey response was saved, but one or more follow-up email preferences could not be saved. Please contact the research team if you still want to receive those follow-ups.";resultMsg.classList.add("error");}else{resultMsg.textContent="Your selected follow-up preference(s) were saved separately from your survey answers.";}writeSession({terminal:"submitted",contactMessage:resultMsg.textContent});
 }catch(err){showError(err.message==="Failed to fetch"?"The survey service is not connected yet. Please try again later.":err.message)}finally{btn.disabled=false;btn.innerHTML="<span>Submit survey</span> <b>↗</b>"}});
 $("finishBtn").addEventListener("click",()=>{if($("successPanel").classList.contains("hidden"))return;$("finishBtn").textContent="You may close this tab";$("finishBtn").disabled=true;writeSession({terminal:readSession()?.terminal||"ineligible"});});
+setupOtherFields();
+
 // Restore the respondent's current step and answers after a refresh or a new deployment reload.
 // sessionStorage keeps this draft scoped to the current browser tab.
 const savedState=readSession();

@@ -14,3 +14,6 @@
 
 /* Stable top alignment: keep the left-panel introduction near the logo instead of bottom-anchored. */
 @media (min-width: 761px){.hero-content{margin:0 auto 0 0}.hero-panel{justify-content:flex-start}.hero-panel .eyebrow{margin-top:0}}
+
+/* Conditional free-text field for multi-select "Other" responses */
+.other-specify{grid-column:1 / -1;display:flex;flex-direction:column;gap:7px;margin:0 0 2px;padding:12px 13px;border:1px solid #dfe5f4;border-radius:10px;background:#fbfcff}.other-specify-label{font-size:11px;font-weight:700;color:#374263}.other-specify input{width:100%;min-width:0;border:1px solid #dfe5f0;border-radius:8px;padding:11px 12px;background:#fff;color:#273052;font:500 12px "DM Sans",sans-serif;outline:none}.other-specify input:focus{border-color:#6a60ff;box-shadow:0 0 0 3px #5b4bff14}.other-specify.hidden{display:none!important}
