@@ -6,7 +6,20 @@ const $=id=>document.getElementById(id);
 function setStep(n){current=Math.max(0,Math.min(steps.length-1,n));steps.forEach((s,i)=>s.classList.toggle("active",i===current));indicators.forEach((s,i)=>{s.classList.toggle("active",i===current);s.classList.toggle("done",i<current)});$("progressFill").style.width=(current/(steps.length-1)*100)+"%";$("stepKicker").textContent=`STEP ${current+1} OF ${steps.length}`;$("sectionTitle").textContent=titleList[current];$("sectionSubtitle").textContent=subtitles[current];$("prevBtn").classList.toggle("hidden",current===0);$("nextBtn").classList.toggle("hidden",current===steps.length-1);$("submitBtn").classList.toggle("hidden",current!==steps.length-1);notice.classList.add("hidden");document.querySelector(".survey-area").scrollIntoView({behavior:"smooth",block:"start"});}
 function selected(name){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)}
 function checkLimit(name,max,label){const boxes=form.querySelectorAll(`[name="${name}"]:checked`);if(boxes.length>max){notice.textContent=`Please select no more than ${max} ${label}.`;notice.classList.remove("hidden");return false}return true}
-function validateStep(){notice.classList.add("hidden");if(current===0){if(!$("country").value){showError("Please select your country.");return false}if(!selected("guardian").length){showError("Please tell us whether you are a parent or legal guardian.");return false}if(selected("guardian")[0]==="no"){showError("Thank you for your interest. This survey is intended for parents and legal guardians of children under 18.");return false}}
+function showEligibilityClosing(){
+  form.classList.add("hidden");
+  document.querySelector(".card-heading").classList.add("hidden");
+  document.querySelector(".progress-wrap").classList.add("hidden");
+  notice.classList.add("hidden");
+  $("successPanel").classList.remove("hidden");
+  $("successPanel").querySelector(".step-kicker").textContent="THANK YOU FOR YOUR INTEREST";
+  $("successPanel").querySelector("h2").textContent="Thank you for stopping by.";
+  $("successPanel").querySelector("p").textContent="This survey is intended for parents and legal guardians of children under 18. No survey response has been submitted.";
+  $("successPanel").querySelector(".success-stats").classList.add("hidden");
+  $("contactResult").classList.add("hidden");
+  $("finishBtn").textContent="Close";
+}
+function validateStep(){notice.classList.add("hidden");if(current===0){if(!$("country").value){showError("Please select your country.");return false}if(!selected("guardian").length){showError("Please tell us whether you are a parent or legal guardian.");return false}}
 if(current===1){if(!selected("concern_level").length){showError("Please rate your level of concern.");return false}if(!selected("concerns").length){showError("Please select at least one concern, or choose “Few or no major concerns”.");return false}if(selected("concerns").length>3){showError("Please select up to three concerns.");return false}}
 if(current===2&&!selected("satisfaction").length){showError("Please rate your satisfaction or choose Not applicable.");return false}
 if(current===3){if(!selected("usefulness").length||!selected("approach").length){showError("Please answer the required product concept questions.");return false}if(!selected("features").length||selected("features").length>3){showError("Please select between one and three features.");return false}if(!selected("barriers").length||selected("barriers").length>2){showError("Please select one or two concerns about using the product.");return false}}
@@ -14,7 +27,7 @@ if(current===4){if(!selected("pay_likelihood").length||!selected("price").length
 if(current===5){if($("wantReport").checked){if(!$("reportEmail").value.trim()||!$("reportEmail").checkValidity()||!$("reportConsent").checked){showError("For the survey report, enter a valid email and confirm the separate report consent, or untick that option.");return false}}if($("wantTesting").checked){if(!$("testingEmail").value.trim()||!$("testingEmail").checkValidity()||!$("testingConsent").checked){showError("For product testing interest, enter a valid email and confirm the separate testing consent, or untick that option.");return false}}}
 return true}
 function showError(t){notice.textContent=t;notice.classList.remove("hidden");notice.scrollIntoView({behavior:"smooth",block:"center"})}
-$("nextBtn").addEventListener("click",()=>{if(validateStep())setStep(current+1)});$("prevBtn").addEventListener("click",()=>setStep(current-1));
+$("nextBtn").addEventListener("click",()=>{if(current===0&&selected("guardian")[0]==="no"){showEligibilityClosing();return}if(validateStep())setStep(current+1)});$("prevBtn").addEventListener("click",()=>setStep(current-1));
 form.addEventListener("change",e=>{if(e.target.name==="guardian"){const no=e.target.value==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no));} });
 $("wantReport").addEventListener("change",()=>$("reportFields").classList.toggle("hidden",!$("wantReport").checked));
 $("wantTesting").addEventListener("change",()=>$("testingFields").classList.toggle("hidden",!$("wantTesting").checked));
@@ -28,5 +41,5 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
   form.classList.add("hidden");document.querySelector(".card-heading").classList.add("hidden");document.querySelector(".progress-wrap").classList.add("hidden");$("successPanel").classList.remove("hidden");
   const resultMsg=$("contactResult");if(!contactTasks.length){resultMsg.textContent="No follow-up email preferences were selected. Your survey response was submitted without an email address.";}else if(failures.length){resultMsg.textContent="Your survey response was saved, but one or more follow-up email preferences could not be saved. Please contact the research team if you still want to receive those follow-ups.";resultMsg.classList.add("error");}else{resultMsg.textContent="Your selected follow-up preference(s) were saved separately from your survey answers.";}
 }catch(err){showError(err.message==="Failed to fetch"?"The survey service is not connected yet. Please try again later.":err.message)}finally{btn.disabled=false;btn.innerHTML="<span>Submit survey</span> <b>↗</b>"}});
-$("finishBtn").addEventListener("click",()=>{$("finishBtn").textContent="You may now close this tab";$("finishBtn").disabled=true;});
+$("finishBtn").addEventListener("click",()=>{if($("successPanel").classList.contains("hidden"))return;$("finishBtn").textContent="You may close this tab";$("finishBtn").disabled=true;});
 setStep(0);
