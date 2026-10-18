@@ -1,9 +1,19 @@
-FamilyGuard Global Survey — Appearance Correction
+FamilyGuard Intelligence — Question-Level Validation Hint Fix
 
 Files included:
-- index.html: preserves the latest footer text update.
-- styles.css: removes the unwanted vertical gap above the left-panel survey label by top-aligning hero content.
+- app.js
+- styles.css
 
-Apply by replacing index.html and styles.css in the FamilyGuard-Global-Survey GitHub repository, then commit the changes and allow Cloudflare Pages to redeploy.
+What changed:
+- Selection-limit warnings now appear beside the exact question they refer to instead of at the top of the survey step.
+- Required-answer validation messages appear beside the relevant question or consent/email option.
+- Question-level warnings clear when the respondent changes that question.
+- Preserves the previously corrected ineligible-respondent closing page and the disabled Close button behaviour.
+- Keeps the existing survey submission endpoints and consent/data-storage logic unchanged.
 
-Do not replace app.js or backend Functions for this visual-only correction. Survey eligibility, response submission, opt-ins, and closing-page behavior are not changed by this update.
+Apply:
+1. Replace app.js and styles.css in the FamilyGuard-Global-Survey GitHub repository with these files.
+2. Commit the changes and wait for Cloudflare Pages to deploy.
+3. Refresh the survey (Ctrl+F5) and test the concerns question by selecting four options; the warning should appear directly under that question's helper text.
+
+Do not replace index.html, functions/, schema.sql, or wrangler.toml for this update.
