@@ -1,8 +1,10 @@
 name = "familyguard-global-survey"
-compatibility_date = "2026-10-18"
 pages_build_output_dir = "."
 
-[[d1_databases]]
-binding = "DB"
-database_name = "familyguard-survey-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+# D1 binding will be connected in the Cloudflare Pages dashboard:
+# Settings > Bindings > Add > D1 database
+# Variable name: DB
+# Database: familyguard-survey-db
+#
+# This file intentionally does not include a database_id placeholder.
+# After the site deploys, connect the D1 database in the dashboard and redeploy.
