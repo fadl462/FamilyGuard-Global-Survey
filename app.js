@@ -70,7 +70,7 @@ const step=steps[current];
 const selectedOther=[...step.querySelectorAll('input[type="checkbox"][value="Other"][name]:checked')];
 for(const box of selectedOther){const field=form.querySelector(`[name="other_${box.name}"]`);if(field&&!field.value.trim()){showQuestionError(box.name,"Please specify what you mean by “Other” before continuing.");field.focus({preventScroll:true});return false}}
 if(current===0){if(!$("country").value){showQuestionError("country","Please select your country.");return false}if(!selected("guardian").length){showQuestionError("guardian","Please tell us whether you are a parent or legal guardian.");return false}}
-if(current===1){if(!selected("concern_level").length){showQuestionError("concern_level","Please rate your level of concern.");return false}if(!selected("concerns").length){showQuestionError("concerns","Please select at least one concern, or choose “Few or no major concerns”.");return false}if(selected("concerns").length>3){showQuestionError("concerns","Please select up to three concerns.");return false}}
+if(current===1){if(!selected("concern_level").length){showQuestionError("concern_level","Please rate your level of concern.");return false}if(!selected("concerns").length){showQuestionError("concerns","Please select at least one concern, or choose “No major concerns”.");return false}if(selected("concerns").length>3){showQuestionError("concerns","Please select up to three concerns.");return false}}
 if(current===2&&!selected("satisfaction").length){showQuestionError("satisfaction","Please rate your satisfaction or choose Not applicable.");return false}
 if(current===3){if(!selected("usefulness").length||!selected("approach").length){showQuestionError(!selected("usefulness").length?"usefulness":"approach","Please answer this required question.");return false}if(!selected("features").length||selected("features").length>3){showQuestionError("features","Please select between one and three features.");return false}if(!selected("barriers").length||selected("barriers").length>2){showQuestionError("barriers","Please select one or two concerns about using the product.");return false}}
 if(current===4){if(!selected("pay_likelihood").length||!selected("price").length){showQuestionError(!selected("pay_likelihood").length?"pay_likelihood":"price","Please answer this required pricing question.");return false}if(!selected("purchase_factors").length||selected("purchase_factors").length>2){showQuestionError("purchase_factors","Please select one or two factors that would influence your decision.");return false}}
@@ -82,10 +82,13 @@ form.addEventListener("change",e=>{const related=e.target.closest(".question, .p
 form.addEventListener("input",()=>writeSession());
 $("wantReport").addEventListener("change",()=>$("reportFields").classList.toggle("hidden",!$("wantReport").checked));
 $("wantTesting").addEventListener("change",()=>$("testingFields").classList.toggle("hidden",!$("wantTesting").checked));
-// Exclusive checkbox answers (for example, “None of these”) cannot be combined
-// with any other answer in the same multi-select question. Apply this rule
-// consistently to every checkbox group containing a recognized exclusive choice.
-const exclusiveAnswer = value => /^(none of these|none of the above|none|few or no major concerns|no concerns)$/i.test(String(value||'').trim());
+// Exclusive checkbox answers cannot be combined with other answers in the same group.
+// The warning always uses the exact visible wording of the exclusive option.
+const exclusiveAnswer = value => /^(none of these|none of the above|none|no major concerns|few or no major concerns|no concerns|no specific approach|nothing in particular)$/i.test(String(value||'').trim());
+function exclusiveLabel(box){
+  const visible=box.closest('label')?.querySelector('span')?.textContent?.trim();
+  return visible || box.value;
+}
 function normalizeExclusiveAnswers(groupName){
   const boxes=[...form.querySelectorAll(`input[type="checkbox"][name="${groupName}"]`)];
   const exclusive=boxes.find(box=>exclusiveAnswer(box.value));
@@ -96,16 +99,13 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   const group=[...form.querySelectorAll(`input[type="checkbox"][name="${input.name}"]`)];
   const exclusive=group.find(box=>exclusiveAnswer(box.value));
   if(exclusive){
-    const otherChecked=group.some(box=>box!==exclusive&&box.checked);
+    const label=exclusiveLabel(exclusive);
     if(input===exclusive&&exclusive.checked){
       group.forEach(box=>{if(box!==exclusive)box.checked=false;});
-      showQuestionError(input.name,'“None of these” cannot be selected with other options. Your other selections have been cleared.');
+      showQuestionError(input.name,`“${label}” cannot be selected with other options. Your other selections have been cleared.`);
     }else if(input!==exclusive&&input.checked&&exclusive.checked){
       exclusive.checked=false;
-      showQuestionError(input.name,'“None of these” cannot be selected with other options. It has been unselected so you can choose this answer.');
-    }else if(input!==exclusive&&input.checked&&otherChecked&&exclusive.checked){
-      exclusive.checked=false;
-      showQuestionError(input.name,'“None of these” cannot be selected with other options. It has been unselected so you can choose this answer.');
+      showQuestionError(input.name,`“${label}” cannot be selected with other options. It has been unselected so you can choose this answer.`);
     }
   }
   const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
