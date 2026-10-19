@@ -18,3 +18,6 @@
 
 /* Conditional free-text field for multi-select "Other" responses */
 .other-specify{grid-column:1 / -1;display:flex;flex-direction:column;gap:7px;margin:0 0 2px;padding:12px 13px;border:1px solid #dfe5f4;border-radius:10px;background:#fbfcff}.other-specify-label{font-size:11px;font-weight:700;color:#374263}.other-specify input{width:100%;min-width:0;border:1px solid #dfe5f0;border-radius:8px;padding:11px 12px;background:#fff;color:#273052;font:500 12px "DM Sans",sans-serif;outline:none}.other-specify input:focus{border-color:#6a60ff;box-shadow:0 0 0 3px #5b4bff14}.other-specify.hidden{display:none!important}
+
+/* Completion screen: informational close note, not a non-functional button. */
+.finish-note{display:block;margin:24px auto 0!important;padding:0!important;color:#7a849e!important;font-size:12px!important;line-height:1.6!important;text-align:center;max-width:420px}
