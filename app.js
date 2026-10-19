@@ -122,7 +122,13 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
     }
   }
   const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
-  if(limits[input.name]){const checked=form.querySelectorAll(`[name="${input.name}"]:checked`);if(checked.length>limits[input.name]){input.checked=false;showQuestionError(input.name,`Please select no more than ${limits[input.name]} options for this question.`)}}
+  if(limits[input.name]){
+    const checked=form.querySelectorAll(`[name="${input.name}"]:checked`);
+    if(checked.length>limits[input.name]){
+      input.checked=false;
+      showQuestionError(input.name,`You can select up to ${limits[input.name]} options. Your last selection was not added.`);
+    }
+  }
   normalizeExclusiveAnswers(input.name);
   syncOtherFields();
   if(input.name==="current_methods")syncSatisfactionQuestion();
