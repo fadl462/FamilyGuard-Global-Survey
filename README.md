@@ -54,3 +54,16 @@ Use an Authorization header: `Bearer YOUR_ADMIN_TOKEN`. Do not put the token in 
 
 ## Local preview
 Open `index.html` in a browser to inspect the UI. API submissions will not save without Cloudflare Pages Functions and the D1 binding. For full local testing, use Wrangler Pages dev with D1 configured.
+
+
+## 20-response batch export (optional)
+
+This project can flag a private export batch after every 20 new survey responses. The export is an Excel-compatible CSV (opens in Excel), with JSON answers expanded into separate columns. It does not email or store a file automatically; an administrator downloads each ready batch using the authenticated endpoint.
+
+1. Run `export-tracker-migration.sql` once in the existing D1 database Console. It initializes the cursor at the current response count, so existing responses are preserved and not included in the first new batch.
+2. Deploy the updated Pages Functions. Keep the existing `DB` binding and `ADMIN_TOKEN` secret.
+3. Check readiness at `/api/admin/export?kind=status` with the `Authorization: Bearer YOUR_ADMIN_TOKEN` header.
+4. When 20 new responses are ready, download `/api/admin/export?kind=batch` with the same header. It downloads a CSV that opens in Excel.
+5. The existing `/api/admin/export`, `?kind=report`, and `?kind=testers` routes remain available.
+
+Important: do not put the admin token in a URL or in public frontend code. Batch export is download-on-demand after the threshold is reached, not an automatic email attachment.
