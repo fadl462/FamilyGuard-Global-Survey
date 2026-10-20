@@ -1,5 +1,5 @@
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status, headers: {"content-type":"application/json; charset=utf-8", "cache-control":"no-store"}});
-const allowed = new Set(["country","guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback"]);
+const allowed = new Set(["country","gender","guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback"]);
 export async function onRequestPost({request, env}) {
   if (!env.DB) return json({error:"Survey database is not configured yet."}, 503);
   let body; try { body = await request.json(); } catch { return json({error:"Invalid request body."}, 400); }
