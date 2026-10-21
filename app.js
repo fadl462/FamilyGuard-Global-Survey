@@ -5,7 +5,7 @@ const STATE_KEY="familyguard-survey-session-v2";
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
-if(startSurveyBtn){startSurveyBtn.addEventListener("click",()=>{document.getElementById("welcomeScreen").classList.add("welcome-hidden");document.querySelector(".layout").classList.add("survey-visible");document.querySelector(".topbar").classList.add("survey-visible");document.body.classList.add("survey-started");window.scrollTo({top:0,behavior:"smooth"});});}
+if(startSurveyBtn){startSurveyBtn.addEventListener("click",()=>{document.getElementById("welcomeScreen").classList.add("welcome-hidden");document.querySelector(".layout").classList.add("survey-visible");document.querySelector(".topbar").classList.add("survey-visible");document.body.classList.add("survey-started");writeSession({started:true,scrollY:0});window.scrollTo({top:0,behavior:"smooth"});});}
 
 function readSession(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"null")}catch{return null}}
 function writeSession(extra={}){try{const prior=readSession()||{};sessionStorage.setItem(STATE_KEY,JSON.stringify({...prior,step:current,answers:collectFormState(),scrollY:window.scrollY,...extra}))}catch{/* Continue even when browser storage is unavailable. */}}
@@ -154,7 +154,7 @@ syncSatisfactionQuestion();
 // Restore the respondent's current step and answers after a refresh or a new deployment reload.
 // sessionStorage keeps this draft scoped to the current browser tab.
 const savedState=readSession();
-if(savedState?.terminal==="submitted"||savedState?.terminal==="ineligible"){document.getElementById("welcomeScreen")?.classList.add("welcome-hidden");document.querySelector(".layout")?.classList.add("survey-visible");document.querySelector(".topbar")?.classList.add("survey-visible");document.body.classList.add("survey-started");}
+if(savedState?.started||savedState?.terminal==="submitted"||savedState?.terminal==="ineligible"){document.getElementById("welcomeScreen")?.classList.add("welcome-hidden");document.querySelector(".layout")?.classList.add("survey-visible");document.querySelector(".topbar")?.classList.add("survey-visible");document.body.classList.add("survey-started");}
 if(!restoreTerminal(savedState)){
   restoreFormState(savedState);
   setStep(Number.isInteger(savedState?.step)?savedState.step:0,false);
