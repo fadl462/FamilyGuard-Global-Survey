@@ -67,3 +67,8 @@ This project can flag a private export batch after every 20 new survey responses
 5. The existing `/api/admin/export`, `?kind=report`, and `?kind=testers` routes remain available.
 
 Important: do not put the admin token in a URL or in public frontend code. Batch export is download-on-demand after the threshold is reached, not an automatic email attachment.
+
+
+## Download a full Excel workbook
+
+After deploying, open `/admin-export.html` on your survey domain. Enter the existing `ADMIN_TOKEN` secret and select **Download Excel workbook (.xlsx)**. The workbook contains three sheets: Survey Responses, Report Subscribers, and Testing Interest. It reads the existing authenticated export endpoints and does not alter the database. The workbook library loads from jsDelivr, so an internet connection is required. Keep the admin token private; do not put it in a URL or commit it to the repository.
