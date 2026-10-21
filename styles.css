@@ -25,7 +25,7 @@
 /* Consistent inline SVG icon treatment */
 .choice-icon svg{width:21px;height:21px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .age-stage{display:grid;place-items:center;height:25px;width:25px}
-.age-stage svg{display:block;width:28px;height:28px;fill:currentColor;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.age-stage svg{display:block;width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
 .privacy-icon svg,.secure-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .secure-icon svg{width:17px;height:17px}
 
