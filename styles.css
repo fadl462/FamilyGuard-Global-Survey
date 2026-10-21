@@ -154,3 +154,27 @@ body { overflow-x:hidden; }
   .welcome-foot { padding:12px 13px; margin-bottom:16px; }
   .welcome-start { width:100%; }
 }
+
+/* On phones, the welcome introduction is a separate first screen. Once the survey starts,
+   hide the promotional panel and let the questionnaire occupy the full viewport. */
+@media (max-width: 760px) {
+  body.survey-started .layout {
+    display: block !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+  }
+  body.survey-started .hero-panel {
+    display: none !important;
+  }
+  body.survey-started .survey-area {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px 12px 24px !important;
+  }
+  body.survey-started .survey-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}
