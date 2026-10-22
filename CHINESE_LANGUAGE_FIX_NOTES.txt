@@ -1,0 +1,4 @@
+FamilyGuard Chinese (Simplified) translation patch
+Updated language.js with Simplified Chinese translations for validation errors, selection-limit pop-ups, placeholders, consent/privacy copy, email follow-up options, submission states, and common interface labels.
+Validation: node --check language.js passed.
+Important: this is a source-code syntax check only. Deploy to Cloudflare Pages and test every step in Simplified Chinese, including required-field errors, multi-select limits, final consent, submission, and confirmation.
