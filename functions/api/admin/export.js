@@ -7,7 +7,7 @@ const csvCell = value => {
 const csvResponse = (rows, filename) => new Response("\uFEFF" + rows.map(row => row.map(csvCell).join(",")).join("\r\n"), {
   headers: {"content-type":"text/csv; charset=utf-8", "content-disposition":`attachment; filename="${filename}"`, "cache-control":"no-store"}
 });
-const answerColumns = ["guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback","gender","gender_description","description"];
+const answerColumns = ["guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback","gender","gender_description","description","contest_source","freelancer_id"];
 // These fields allow multiple selections. Keep the readable combined response and
 // add a separate 1/0 indicator column for every option seen in the export.
 const multiSelectFields = ["child_ages","devices","concerns","current_methods","features","barriers","purchase_factors"];
