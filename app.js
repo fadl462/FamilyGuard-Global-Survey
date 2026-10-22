@@ -189,7 +189,6 @@ $("wantReport").addEventListener("change",()=>$("reportFields").classList.toggle
 $("wantTesting").addEventListener("change",()=>$("testingFields").classList.toggle("hidden",!$("wantTesting").checked));
 // Exclusive checkbox answers cannot be combined with other answers in the same group.
 // The warning always uses the exact visible wording of the exclusive option.
-// Compare the stable, untranslated input values, never the translated visible labels.
 const exclusiveAnswer = value => /^(none of these|none of the above|none|no major concerns|few or no major concerns|no concerns|no specific approach|nothing in particular)$/i.test(String(value||'').trim());
 function exclusiveLabel(box){
   const visible=box.closest('label')?.querySelector('span')?.textContent?.trim();
@@ -207,14 +206,17 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   if(exclusive){
     const label=exclusiveLabel(exclusive);
     if(input===exclusive&&exclusive.checked){
-      const hadOtherSelections=group.some(box=>box!==exclusive&&box.checked);
+      // Selecting an exclusive option automatically clears other choices.
+      // This is a valid state, so do not display an error.
       group.forEach(box=>{if(box!==exclusive)box.checked=false;});
-      // Selecting an exclusive answer by itself is valid and should not show an error.
-      if(hadOtherSelections) showQuestionError(input.name,`“${label}” cannot be selected with other options. Your other selections have been cleared.`);
     }else if(input!==exclusive&&input.checked&&exclusive.checked){
+      // Selecting a regular option automatically removes the exclusive choice.
+      // This is also valid and should not produce a warning.
       exclusive.checked=false;
-      // The newly selected regular answer is valid; silently remove the exclusive choice.
     }
+    // Clear any stale warning left by an earlier version or previous selection.
+    const question=form.querySelector(`[name="${input.name}"]`)?.closest(".question");
+    question?.querySelectorAll(":scope .question-notice").forEach(el=>el.remove());
   }
   const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
   if(limits[input.name]){
