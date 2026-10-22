@@ -89,6 +89,79 @@ Object.assign(maps.fr, {
   'safer digital world':'monde numérique plus sûr',
   'for families.':'pour les familles.'
 });
+Object.assign(maps.fr, {
+  'Language':'Langue',
+  'Choose survey language':'Choisir la langue du questionnaire',
+  'Help shape a':'Contribuez à créer un',
+  'safer digital world':'monde numérique plus sûr',
+  'families.':'pour les familles.',
+  'for families.':'pour les familles.',
+  'GLOBAL FAMILY SAFETY STUDY':'ÉTUDE MONDIALE SUR LA SÉCURITÉ NUMÉRIQUE DES FAMILLES',
+  'GLOBAL SURVEY · 2026':'ENQUÊTE MONDIALE · 2026',
+  'We’re exploring how technology can help families navigate online risks with greater confidence. Your perspective will help shape what comes next.':'Nous étudions comment la technologie peut aider les familles à mieux faire face aux risques en ligne. Votre avis contribuera à orienter la suite.',
+  "We're exploring how technology can help families navigate online risks with greater confidence. Your perspective will help shape what comes next.":'Nous étudions comment la technologie peut aider les familles à mieux faire face aux risques en ligne. Votre avis contribuera à orienter la suite.',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'Nous étudions comment la technologie peut aider les familles à faire face aux risques en ligne avec davantage de confiance. Vos réponses contribueront à orienter les prochaines étapes.',
+  'Privacy comes first':'La confidentialité avant tout',
+  "No children's personal details needed.":'Aucune donnée personnelle concernant les enfants n’est nécessaire.',
+  'Just 3–5 minutes':'Seulement 3 à 5 minutes',
+  'Only 3 to 5 minutes':'Seulement 3 à 5 minutes',
+  'A few thoughtful answers make a difference.':'Quelques réponses réfléchies peuvent faire la différence.',
+  'A global perspective':'Une perspective mondiale',
+  'Insights from families around the world.':'Les points de vue de familles du monde entier.',
+  'Real insights. Safer tomorrows.':'Des avis concrets. Un avenir plus sûr.',
+  'For parents. For children. For a safer digital world.':'Pour les parents. Pour les enfants. Pour un monde numérique plus sûr.',
+  'Start Survey':'Commencer le questionnaire',
+  'Click when you’re ready to begin.':'Cliquez lorsque vous êtes prêt à commencer.',
+  'PART 1 OF 6':'PARTIE 1 SUR 6',
+  'Privacy-minded research':'Une recherche respectueuse de la vie privée',
+  'OPTIONAL FOLLOW-UP':'SUIVI FACULTATIF',
+  'Email address for the report':'Adresse e-mail pour recevoir le rapport',
+  'Email address for testing opportunities':'Adresse e-mail pour les possibilités de test',
+  'Share what would make the biggest difference for your family…':'Qu’est-ce qui ferait la plus grande différence pour votre famille ?',
+  'Your answer is optional. Please do not include names':'Votre réponse est facultative. Veuillez ne pas inclure de noms.',
+  'Before you submit':'Avant d’envoyer vos réponses',
+  'I have read the notice and voluntarily agree to submit my survey responses.':'J’ai lu l’avis de confidentialité et j’accepte volontairement de transmettre mes réponses au questionnaire.',
+  'Choose what you’d like to hear from us about':'Choisissez les sujets pour lesquels vous souhaitez recevoir des nouvelles',
+  'These choices are optional. You can select either, both, or neither. Each email address is stored separately from your survey answers, and each purpose has its own consent.':'Ces choix sont facultatifs. Vous pouvez en sélectionner un, les deux ou aucun. Chaque adresse e-mail est conservée séparément de vos réponses au questionnaire, et chaque utilisation nécessite un consentement distinct.',
+  'Send me the overall survey report':'Recevoir le rapport global de l’enquête',
+  'Email me when the global research findings are available.':'M’envoyer un e-mail lorsque les résultats de l’étude mondiale seront disponibles.',
+  'I’m interested in testing a future product':'Je souhaite participer aux tests d’un futur produit',
+  'Contact me about possible research or pilot testing opportunities. This is an expression of interest, not a commitment to participate.':'Me contacter au sujet d’éventuelles études ou possibilités de tests pilotes. Il s’agit d’une manifestation d’intérêt et non d’un engagement à participer.',
+  'You can complete the survey without providing an email. Do not enter a child’s email address.':'Vous pouvez répondre au questionnaire sans fournir d’adresse e-mail. N’indiquez pas l’adresse e-mail d’un enfant.',
+  'Previous':'Précédent',
+  'Next':'Suivant',
+  'Submit survey':'Envoyer les réponses',
+  'Thank you for sharing your perspective.':'Merci d’avoir partagé votre point de vue.',
+  'Your responses help shape safer digital experiences.':'Vos réponses contribuent à rendre les expériences numériques plus sûres.',
+  'Your contribution will help us better understand families’ online safety concerns and inform the development of FamilyGuard Intelligence.':'Votre contribution nous aidera à mieux comprendre les préoccupations des familles en matière de sécurité en ligne et à guider le développement de FamilyGuard Intelligence.',
+  'Your selected follow-up preference(s) were saved separately from your survey answers.':'Vos préférences de suivi ont été enregistrées séparément de vos réponses au questionnaire.',
+  'No follow-up email was requested. Your survey response was submitted without an email address.':'Vous n’avez demandé aucun suivi par e-mail. Votre réponse au questionnaire a été envoyée sans adresse e-mail.',
+  'Your response was submitted successfully.':'Votre réponse a bien été envoyée.',
+  'Your survey response was saved, but a follow-up email preference could not be saved. ':'Votre réponse au questionnaire a été enregistrée, mais votre préférence de suivi par e-mail n’a pas pu être enregistrée. ',
+  'Thank you for stopping by.':'Merci de votre visite.',
+  'Thank you — your contest entry is recorded.':'Merci, votre participation au concours a été enregistrée.',
+  'Your eligible survey response has been submitted. Take a screenshot of this confirmation, including your Freelancer.com user ID, and submit it as your contest entry on Freelancer.com.':'Votre réponse admissible au questionnaire a été envoyée. Faites une capture d’écran de cette confirmation, avec votre identifiant Freelancer.com, puis envoyez-la sur Freelancer.com comme preuve de participation au concours.',
+  'You’ve already participated.':'Vous avez déjà participé.',
+  'Survey temporarily unavailable':'Questionnaire temporairement indisponible',
+  'Checking participation status':'Vérification de votre participation',
+  'Thank you for contributing to the FamilyGuard Global Family Safety Study. Our records show that a response has already been submitted from this internet connection or browser. Only one completed response is allowed for this study.':'Merci de contribuer à l’étude mondiale de FamilyGuard sur la sécurité numérique des familles. Nos données indiquent qu’une réponse a déjà été envoyée depuis cette connexion Internet ou ce navigateur. Une seule réponse complète est autorisée pour cette étude.',
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'Nous ne pouvons pas vérifier votre participation pour le moment. Afin de préserver l’intégrité de l’étude, le questionnaire est temporairement indisponible. Veuillez réessayer plus tard ou contacter l’équipe de recherche.',
+  'Please wait while we check whether a response has already been submitted.':'Veuillez patienter pendant que nous vérifions si une réponse a déjà été envoyée.',
+  'No response has been submitted by this check.':'Cette vérification n’a envoyé aucune réponse.',
+  'You may now close this tab.':'Vous pouvez maintenant fermer cet onglet.',
+  'Enter a valid email address, such as name@example.com.':'Veuillez saisir une adresse e-mail valide, par exemple nom@exemple.com.',
+  'Please confirm that you agree to receive the survey report by email.':'Veuillez confirmer que vous acceptez de recevoir le rapport de l’enquête par e-mail.',
+  'Please confirm your consent before submitting.':'Veuillez confirmer votre consentement avant d’envoyer vos réponses.',
+  'Please agree to the contest entry and identity-linking notice.':'Veuillez accepter les conditions de participation au concours et l’avis relatif à l’association de votre identité à votre participation.',
+  'Submitting…':'Envoi en cours…',
+  'We couldn’t submit your response. Please try again.':'Nous n’avons pas pu envoyer votre réponse. Veuillez réessayer.',
+  'Report email could not be saved.':'L’adresse e-mail pour le rapport n’a pas pu être enregistrée.',
+  'Testing interest could not be saved.':'Votre intérêt pour les tests n’a pas pu être enregistré.',
+  'A follow-up preference could not be saved.':'Une préférence de suivi n’a pas pu être enregistrée.',
+  'RESPONSE RECEIVED':'RÉPONSE REÇUE',
+  'FREELANCER CONTEST ENTRY CONFIRMED':'PARTICIPATION AU CONCOURS FREELANCER CONFIRMÉE'
+});
+
 Object.assign(maps.pt, {
   'GLOBAL SURVEY · 2026':'INQUÉRITO GLOBAL · 2026',
   "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'Estamos a explorar como a tecnologia pode ajudar as famílias a enfrentar os riscos on-line com mais confiança. As suas respostas ajudarão a orientar os próximos passos.',
@@ -270,10 +343,10 @@ Object.assign(maps.zh,{
 const languageLabels={en:'Language',es:'Idioma',fr:'Langue',pt:'Idioma',ar:'اللغة',zh:'语言'};
 const languageAriaLabels={en:'Survey language',es:'Idioma de la encuesta',fr:'Langue du questionnaire',pt:'Idioma do inquérito',ar:'لغة الاستبيان',zh:'问卷语言'};
 let current=localStorage.getItem('familyguard-language')||'en';if(!packs[current])current='en';
-const selector=document.createElement('select');selector.id='familyguardLanguage';selector.setAttribute('aria-label','Survey language');selector.innerHTML=Object.entries(packs).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');selector.value=current;
+const selector=document.createElement('select');selector.id='familyguardLanguage';selector.setAttribute('aria-label',languageAriaLabels[current]);selector.innerHTML=Object.entries(packs).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');selector.value=current;
 const languageHost=document.querySelector('.welcome-inner');if(languageHost){const oldLanguage=languageHost.querySelector('.language-picker-wrap');if(oldLanguage)oldLanguage.remove();const wrap=document.createElement('label');wrap.className='language-picker-wrap';wrap.setAttribute('aria-label','Choose survey language');wrap.append(document.createTextNode(languageLabels[current]+' '),selector);languageHost.prepend(wrap)}
 const originals=new WeakMap();function walkText(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode())a.push(w.currentNode);return a}function translateTextNodes(root,dict){for(const n of walkText(root)){if(n.parentElement?.closest('#familyguardLanguage,.language-label'))continue;if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();n.nodeValue=dict[trim]?raw.replace(trim,dict[trim]):raw;}}
-function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',languageAriaLabels[current])});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle){const welcomeHeadlines={en:'Help shape a<br>safer digital world<br>for <span>families.</span>',es:'Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>',fr:'Contribuez à créer un<br>monde numérique plus sûr<br><span>pour les familles.</span>',pt:'Ajude a criar um<br>mundo digital mais seguro<br><span>para as famílias.</span>',ar:'ساهم في بناء عالم<br>رقمي أكثر أمانًا<br><span>للعائلات.</span>',zh:'共同打造一个<br>更安全的数字世界<br><span>为每个家庭。</span>'};welcomeTitle.innerHTML=welcomeHeadlines[current]||welcomeHeadlines.en;}document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
+function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',languageAriaLabels[current])});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeHeadlines={en:'Help shape a<br>safer digital world<br>for <span>families.</span>',es:'Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>',fr:'Contribuez à créer un<br>monde numérique plus sûr<br><span>pour les familles.</span>',pt:'Ajude a criar um<br>mundo digital mais seguro<br><span>para as famílias.</span>',ar:'ساهم في بناء عالم<br>رقمي أكثر أمانًا<br><span>للعائلات.</span>',zh:'共同打造一个<br>更安全的数字世界<br><span>为每个家庭。</span>'};const headline=welcomeHeadlines[current]||welcomeHeadlines.en;const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle)welcomeTitle.innerHTML=headline;const sideHeadline=document.querySelector('.hero-content h1');if(sideHeadline)sideHeadline.innerHTML=headline;document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
 selector.addEventListener('change',()=>change(selector.value));
 // Re-translate after survey steps are re-rendered by the original survey controller.
 const originalText=window.setStep;document.addEventListener('click',e=>{if(e.target.closest('#nextBtn,#prevBtn'))setTimeout(()=>{const idx=Number(document.querySelector('.survey-step.active')?.dataset.step||0);if(window.FG_I18N){const t=document.getElementById('sectionTitle'),s=document.getElementById('sectionSubtitle');if(t)t.textContent=packs[current].titles[idx];if(s)s.textContent=packs[current].subtitles[idx];}},0)});

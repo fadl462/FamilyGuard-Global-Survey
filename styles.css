@@ -271,3 +271,15 @@ body { overflow-x:hidden; }
 .language-rtl .welcome-content h1 span{unicode-bidi:plaintext;direction:rtl;}
 .language-rtl .welcome-copy,.language-rtl .welcome-trust-list,.language-rtl .welcome-foot,.language-rtl .welcome-ready{direction:rtl;text-align:right;}
 @media(max-width:760px){.welcome-inner{grid-template-columns:minmax(0,1fr) auto!important;column-gap:10px;row-gap:20px;}.welcome-inner>.language-picker-wrap{grid-column:2;grid-row:1;top:auto!important;right:auto!important;left:auto!important;max-width:100%;font-size:10px!important;}.welcome-inner>.language-picker-wrap select{min-width:0;max-width:132px;padding:7px 8px;}.welcome-inner>.welcome-brand{grid-column:1;grid-row:1;max-width:100%!important;margin:0!important;}.welcome-inner>.welcome-content{grid-column:1/-1;grid-row:2;margin-top:0!important;}.welcome-content h1{overflow-wrap:normal;word-break:normal;}.language-rtl .welcome-content h1{font-size:clamp(30px,7.5vw,44px);line-height:1.4;}}
+
+
+/* Final multilingual polish: keep the selector label and control together without colliding with the brand. */
+.language-picker-wrap{position:relative;z-index:5;display:inline-flex;align-items:center;gap:9px;max-width:100%;white-space:nowrap;}
+.language-picker-wrap select{min-width:112px;}
+.welcome-inner{grid-template-columns:minmax(0,1fr) auto;}
+.welcome-inner>.language-picker-wrap{justify-self:end;grid-column:2;grid-row:1;}
+.welcome-inner>.welcome-brand{grid-column:1;grid-row:1;}
+.welcome-inner>.welcome-content{grid-column:1/-1;grid-row:2;}
+.language-rtl .language-picker-wrap{direction:rtl;}
+.language-rtl .welcome-inner>.language-picker-wrap{justify-self:start;}
+@media(max-width:760px){.welcome-inner{grid-template-columns:minmax(0,1fr) auto}.welcome-inner>.language-picker-wrap{grid-column:2;grid-row:1;justify-self:end;margin:0 0 0 auto}.welcome-inner>.welcome-brand{grid-column:1;grid-row:1}.welcome-inner>.welcome-content{grid-column:1/-1;grid-row:2}.language-picker-wrap{font-size:12px}.language-picker-wrap select{min-width:105px}}
