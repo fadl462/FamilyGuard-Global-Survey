@@ -353,3 +353,42 @@ const originalText=window.setStep;document.addEventListener('click',e=>{if(e.tar
 change(current);
 const observer=new MutationObserver(records=>{for(const r of records){for(const n of r.addedNodes){if(n.nodeType===Node.TEXT_NODE){if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();if(maps[current][trim])n.nodeValue=raw.replace(trim,maps[current][trim]);}else if(n.nodeType===Node.ELEMENT_NODE&&!n.closest?.('#familyguardLanguage,.language-label'))translateTextNodes(n,maps[current]);}}});observer.observe(document.body,{childList:true,subtree:true});
 })();
+
+
+// Final language-label and homepage headline corrections.
+Object.assign(maps.pt, {
+  'Language':'Idioma',
+  'Choose survey language':'Escolher o idioma do inquérito',
+  'Help shape a':'Ajude a criar um',
+  'Help shape a safer digital world for families.':'Ajude a criar um mundo digital mais seguro para as famílias.',
+  'We’re exploring how technology can help families navigate online risks with greater confidence. Your perspective will help shape what comes next.':'Estamos a explorar como a tecnologia pode ajudar as famílias a enfrentar os riscos em linha com mais confiança. A sua opinião ajudará a definir os próximos passos.',
+  'Privacy comes first':'A privacidade está em primeiro lugar',
+  'A global perspective':'Uma perspetiva global',
+  'Opinions from families around the world.':'Perspetivas de famílias de todo o mundo.',
+  'Start the survey':'Começar o inquérito',
+  'Start Survey':'Começar o inquérito',
+  'Start survey':'Começar o inquérito'
+});
+Object.assign(maps.ar, {
+  'Language':'اللغة',
+  'Choose survey language':'اختر لغة الاستبيان',
+  'Help shape a':'ساهم في بناء',
+  'Help shape a safer digital world for families.':'ساهم في بناء عالم رقمي أكثر أمانًا للعائلات.',
+  'Help build a safer digital world for families.':'ساهم في بناء عالم رقمي أكثر أمانًا للعائلات.',
+  'Privacy comes first':'الخصوصية أولًا',
+  'A global perspective':'منظور عالمي',
+  'Opinions from families around the world.':'آراء الأسر من جميع أنحاء العالم.',
+  'Start the survey':'ابدأ الاستبيان',
+  'Start Survey':'ابدأ الاستبيان',
+  'Start survey':'ابدأ الاستبيان'
+});
+Object.assign(maps.zh, {
+  'Language':'语言',
+  'Choose survey language':'选择问卷语言',
+  'Help shape a':'共同打造',
+  'Help shape a safer digital world for families.':'共同打造一个更安全的家庭数字世界。',
+  'Help build a safer digital world for families.':'共同打造一个更安全的家庭数字世界。',
+  'Start the survey':'开始问卷',
+  'Start Survey':'开始问卷',
+  'Start survey':'开始问卷'
+});

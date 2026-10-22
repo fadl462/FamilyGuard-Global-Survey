@@ -283,3 +283,10 @@ body { overflow-x:hidden; }
 .language-rtl .language-picker-wrap{direction:rtl;}
 .language-rtl .welcome-inner>.language-picker-wrap{justify-self:start;}
 @media(max-width:760px){.welcome-inner{grid-template-columns:minmax(0,1fr) auto}.welcome-inner>.language-picker-wrap{grid-column:2;grid-row:1;justify-self:end;margin:0 0 0 auto}.welcome-inner>.welcome-brand{grid-column:1;grid-row:1}.welcome-inner>.welcome-content{grid-column:1/-1;grid-row:2}.language-picker-wrap{font-size:12px}.language-picker-wrap select{min-width:105px}}
+
+
+/* Final RTL header collision fix: keep language selector distinct from the brand. */
+.language-rtl .welcome-inner>.language-picker-wrap{justify-self:end!important;direction:ltr!important;position:relative!important;z-index:10!important;}
+.language-rtl .welcome-inner>.welcome-brand{justify-self:start!important;position:relative!important;z-index:2!important;}
+.language-rtl .welcome-content h1 span{unicode-bidi:isolate;direction:rtl;}
+.language-rtl .language-picker-wrap select{max-width:150px;}
