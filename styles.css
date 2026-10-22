@@ -243,3 +243,15 @@ body { overflow-x:hidden; }
 .owner-test-banner strong{display:inline-block;border-radius:6px;background:#8a5a00;color:#fff;padding:4px 7px;font-size:10px;letter-spacing:.08em}
 .owner-test-banner span{line-height:1.5}
 @media(max-width:560px){.owner-test-banner{gap:6px;padding:9px 12px;font-size:11px}.owner-test-banner strong{font-size:9px}}
+
+
+/* Final Chinese and Arabic localization corrections */
+.language-picker-wrap{white-space:nowrap}
+.language-rtl .welcome-inner{direction:ltr}
+.language-rtl .welcome-inner>.language-picker-wrap{right:clamp(18px,4vw,64px);left:auto;direction:ltr}
+.language-rtl .welcome-brand{position:relative;z-index:2;max-width:calc(100% - 210px);direction:ltr;text-align:left}
+.language-rtl .welcome-content{direction:rtl;text-align:right;margin-left:auto;margin-right:0}
+.language-rtl .welcome-content h1{unicode-bidi:plaintext;direction:rtl;text-align:right}
+.language-rtl .welcome-content h1 span{unicode-bidi:plaintext}
+.language-rtl .welcome-copy{unicode-bidi:plaintext}
+@media(max-width:760px){.language-rtl .welcome-inner>.language-picker-wrap{right:14px;left:auto;top:12px}.language-rtl .welcome-brand{margin-top:0;max-width:calc(100% - 170px)}.language-rtl .welcome-content{margin-top:36px}.language-rtl .welcome-content h1{font-size:clamp(30px,7.5vw,44px);line-height:1.35}}

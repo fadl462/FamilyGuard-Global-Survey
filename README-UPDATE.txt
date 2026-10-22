@@ -1,3 +1,1 @@
-FamilyGuard contest thank-you ID card styling fix
-
-Replace the existing styles.css at the project root with the included file. This restores the soft translucent blue/lavender card with rounded corners around the Freelancer ID. Other files and survey logic are unchanged.
+Chinese and Arabic localization correction: language selector labels are now consistently localized (including Chinese 语言 and Arabic اللغة); homepage headlines are composed as complete translations to prevent English fragments; Arabic header/content positioning is adjusted for RTL readability. Deploy the contents of this ZIP to the existing Cloudflare Pages project.
