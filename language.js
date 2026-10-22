@@ -951,7 +951,14 @@ Object.assign(maps.zh, {
   'This survey is intended for parents and legal guardians of children under 18. No survey response has been submitted.':'本问卷面向 18 岁以下儿童的父母及法定监护人。尚未提交任何问卷回答。',
   'No personal data from children is required.':'无需提供儿童的个人信息。',
   'You’re all set.':'一切准备就绪。',
-  'Language':'语言','Chinese':'中文','Simplified Chinese':'中文'
+  'Language':'语言','Chinese':'中文','Simplified Chinese':'中文',
+  'Not sure':'尚不确定','Not sure yet':'尚不确定','More than $10':'超过 10 美元',
+  'None of these':'以上都不是','No major concerns':'没有重大担忧','No specific approach':'没有特定的方法',
+  '“以上都不是” cannot be selected with other options. Your other selections have been cleared.':'“以上都不是”不能与其他选项同时选择。已清除您之前选择的其他选项。',
+  '“没有特别担忧” cannot be selected with other options. Your other selections have been cleared.':'“没有特别担忧”不能与其他选项同时选择。已清除您之前选择的其他选项。',
+  '“没有特定的方法” cannot be selected with other options. Your other selections have been cleared.':'“没有特定的方法”不能与其他选项同时选择。已清除您之前选择的其他选项。',
+  'You can select up to 2 options. Your last selection was not added.':'最多可选择 2 项。未添加您最后选择的选项。',
+  'You can select up to 3 options. Your last selection was not added.':'最多可选择 3 项。未添加您最后选择的选项。'
 });
 
 // Apply all dictionaries only after every language patch has been registered.

@@ -1,0 +1,9 @@
+FamilyGuard Global Survey — correction package
+
+Fixes included:
+1. Cache-busts app.js and language.js so the browser loads the corrected build instead of stale cached scripts.
+2. Removes old exclusive-answer validation warnings that can persist from a prior build.
+3. Normalizes exclusive checkbox choices after draft restoration and after changes; selecting “None of these” / equivalent clears other options, and selecting a normal option clears the exclusive choice without an error banner.
+4. Adds Chinese translations for the English “Not sure” label, pricing label, and related validation messages.
+
+Deploy the complete contents of this ZIP to the existing Cloudflare Pages project. Then hard-refresh with Ctrl+Shift+R. Test both selecting an exclusive option and selecting a regular option afterward.

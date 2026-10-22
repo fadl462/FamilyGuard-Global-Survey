@@ -200,6 +200,14 @@ function normalizeExclusiveAnswers(groupName){
   if(!exclusive)return;
   if(exclusive.checked)boxes.forEach(box=>{if(box!==exclusive)box.checked=false;});
 }
+// Remove stale exclusive-option warnings that may remain from an older cached build.
+function clearExclusiveWarnings(){
+  form.querySelectorAll('.question-notice').forEach(node=>{
+    const text=(node.textContent||'').toLowerCase();
+    if(text.includes('cannot be selected with other options') || text.includes('不能与其他选项同时选择') || text.includes('your other selections have been cleared') || text.includes('已清除您之前选择的其他选项')) node.remove();
+  });
+}
+clearExclusiveWarnings();
 form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEventListener("change",()=>{
   const group=[...form.querySelectorAll(`input[type="checkbox"][name="${input.name}"]`)];
   const exclusive=group.find(box=>exclusiveAnswer(box.value));
@@ -227,6 +235,7 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
     }
   }
   normalizeExclusiveAnswers(input.name);
+  clearExclusiveWarnings();
   syncOtherFields();
   if(input.name==="current_methods")syncSatisfactionQuestion();
   writeSession();
@@ -253,6 +262,8 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
 }catch(err){showError(err.message==="Failed to fetch"?"The survey service is not connected yet. Please try again later.":err.message)}finally{btn.disabled=false;btn.innerHTML="<span>Submit survey</span> <b>↗</b>"}});
 
 setupOtherFields();
+form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>normalizeExclusiveAnswers(input.name));
+clearExclusiveWarnings();
 syncSatisfactionQuestion();
 syncContestUI();
 checkParticipationBeforeOpening();
