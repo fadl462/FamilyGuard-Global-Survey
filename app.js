@@ -189,6 +189,7 @@ $("wantReport").addEventListener("change",()=>$("reportFields").classList.toggle
 $("wantTesting").addEventListener("change",()=>$("testingFields").classList.toggle("hidden",!$("wantTesting").checked));
 // Exclusive checkbox answers cannot be combined with other answers in the same group.
 // The warning always uses the exact visible wording of the exclusive option.
+// Compare the stable, untranslated input values, never the translated visible labels.
 const exclusiveAnswer = value => /^(none of these|none of the above|none|no major concerns|few or no major concerns|no concerns|no specific approach|nothing in particular)$/i.test(String(value||'').trim());
 function exclusiveLabel(box){
   const visible=box.closest('label')?.querySelector('span')?.textContent?.trim();
@@ -206,11 +207,13 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   if(exclusive){
     const label=exclusiveLabel(exclusive);
     if(input===exclusive&&exclusive.checked){
+      const hadOtherSelections=group.some(box=>box!==exclusive&&box.checked);
       group.forEach(box=>{if(box!==exclusive)box.checked=false;});
-      showQuestionError(input.name,`“${label}” cannot be selected with other options. Your other selections have been cleared.`);
+      // Selecting an exclusive answer by itself is valid and should not show an error.
+      if(hadOtherSelections) showQuestionError(input.name,`“${label}” cannot be selected with other options. Your other selections have been cleared.`);
     }else if(input!==exclusive&&input.checked&&exclusive.checked){
       exclusive.checked=false;
-      showQuestionError(input.name,`“${label}” cannot be selected with other options. It has been unselected so you can choose this answer.`);
+      // The newly selected regular answer is valid; silently remove the exclusive choice.
     }
   }
   const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
