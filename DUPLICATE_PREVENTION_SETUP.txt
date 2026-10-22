@@ -1,0 +1,12 @@
+FAMILYGUARD ONE-RESPONSE RESTRICTION — REQUIRED SETUP
+
+This version applies the same restriction to the standard and Freelancer contest links.
+
+1. In Cloudflare D1 > familyguard-survey-db > Console, run duplicate-participation-migration.sql once. It creates the survey_ip_participation table and does not delete existing data.
+2. In Cloudflare Pages > your project > Settings > Variables and Secrets, add a SECRET named DUPLICATE_HASH_SECRET. Use a random secret at least 32 characters long. Keep it private and out of Git.
+3. Redeploy after adding the secret and migration.
+4. Verify /api/participation-status returns participated:false before a response. After a completed response, both links must show “You’ve already participated.”
+
+Privacy/accuracy note: the site stores a salted one-way hash, not the raw IP. IP addresses are not unique people: shared networks may block multiple family members, and VPN/network changes can bypass the restriction. The survey consent text discloses the check.
+
+Do not distribute the public link until the migration and secret are configured. If setup is incomplete, the survey intentionally remains unavailable.

@@ -7,6 +7,33 @@ const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelance
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
+const COMPLETED_KEY="familyguard-survey-completed-v1";
+let participationGate=null;
+function renderParticipationGate(kind){
+  if(!participationGate){
+    participationGate=document.createElement("div");
+    participationGate.className="participation-gate";
+    participationGate.setAttribute("role","alert");
+    participationGate.setAttribute("aria-live","assertive");
+    document.body.appendChild(participationGate);
+  }
+  const already=kind==="already";
+  const unavailable=kind==="unavailable";
+  participationGate.innerHTML=`<section class="participation-gate-card"><div class="participation-gate-icon">${already?"✓":unavailable?"!":"…"}</div><span class="participation-gate-kicker">FAMILYGUARD INTELLIGENCE</span><h1>${already?"You’ve already participated.":unavailable?"Survey temporarily unavailable":"Checking participation status"}</h1><p>${already?"Thank you for contributing to the FamilyGuard Global Family Safety Study. Our records show that a response has already been submitted from this internet connection or browser. Only one completed response is allowed across the standard and Freelancer contest links.":unavailable?"We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.":"Please wait while we check whether a response has already been submitted."}</p>${already?'<small>You may now close this tab.</small>':unavailable?'<small>No response has been submitted by this check.</small>':''}</section>`;
+}
+async function checkParticipationBeforeOpening(){
+  renderParticipationGate("checking");
+  try{
+    if(localStorage.getItem(COMPLETED_KEY)==="1") { renderParticipationGate("already"); return; }
+  }catch(_){}
+  try{
+    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error||"Could not verify participation.");
+    if(data.participated){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){} renderParticipationGate("already"); return;}
+    participationGate?.remove(); participationGate=null;
+  }catch(_){renderParticipationGate("unavailable");}
+}
 if(isFreelancerContest){document.getElementById("welcomeContestNotice")?.classList.remove("hidden");}
 // Freelancer usernames always use an @ prefix. Insert it on first focus and preserve it while typing.
 const freelancerIdField=document.getElementById("freelancerId");
@@ -179,7 +206,8 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   writeSession();
 }));
 function payload(){const data={};const names=new Set([...form.querySelectorAll("[name]")].map(x=>x.name));for(const name of names){const fields=[...form.querySelectorAll(`[name="${name}"]`)];if(fields[0]?.type==="checkbox")data[name]=selected(name);else if(fields[0]?.type==="radio")data[name]=selected(name)[0]||"";else data[name]=fields[0]?.value||""}return data}
-$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
+$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(res.status===409||result.alreadyParticipated){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){}renderParticipationGate("already");return}if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
+  try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){}
   const contactTasks=[];
   if($("wantReport").checked)contactTasks.push(fetch("/api/report-subscribers",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("reportEmail").value.trim(),consent:$("reportConsent").checked})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Report email could not be saved.");return "report"}));
   if($("wantTesting").checked)contactTasks.push(fetch("/api/tester-interest",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("testingEmail").value.trim(),consent:$("testingConsent").checked})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Testing interest could not be saved.");return "testing"}));
@@ -201,6 +229,7 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
 setupOtherFields();
 syncSatisfactionQuestion();
 syncContestUI();
+checkParticipationBeforeOpening();
 
 // Restore the respondent's current step and answers after a refresh or a new deployment reload.
 // sessionStorage keeps this draft scoped to the current browser tab.

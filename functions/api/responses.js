@@ -1,4 +1,4 @@
-const json = (data, status = 200) => new Response(JSON.stringify(data), {status, headers: {"content-type":"application/json; charset=utf-8", "cache-control":"no-store"}});
+import { json, getParticipationHash } from "./_duplicate-guard.js";
 const allowed = new Set(["country","gender","gender_description","guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback","contest_source","freelancer_id"]);
 export async function onRequestPost({request, env}) {
   if (!env.DB) return json({error:"Survey database is not configured yet."}, 503);
@@ -16,10 +16,18 @@ export async function onRequestPost({request, env}) {
     else if (typeof value === "string") clean[key] = value.slice(0, key === "open_feedback" ? 1500 : 200);
   }
   if (source === "freelancer-contest") { clean.contest_source = source; clean.freelancer_id = freelancerId; }
+  const participationHash = await getParticipationHash(request, env);
+  if (!participationHash) return json({error:"The survey is temporarily unavailable while duplicate-prevention is configured."}, 503);
   const id = crypto.randomUUID(), createdAt = new Date().toISOString();
   try {
-    await env.DB.prepare("INSERT INTO survey_responses (id, created_at, country, answers_json, consent) VALUES (?, ?, ?, ?, 1)")
-      .bind(id, createdAt, clean.country, JSON.stringify(clean)).run();
+    // D1 batch executes transactionally: the unique IP claim and response are saved together.
+    // The unique hash makes this restriction apply across standard and contest links.
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO survey_ip_participation (ip_hash, response_id, created_at, source) VALUES (?, ?, ?, ?)")
+        .bind(participationHash, id, createdAt, source),
+      env.DB.prepare("INSERT INTO survey_responses (id, created_at, country, answers_json, consent) VALUES (?, ?, ?, ?, 1)")
+        .bind(id, createdAt, clean.country, JSON.stringify(clean))
+    ]);
 
     // If the optional export tracker has been installed, mark the next 20-response
     // batch as ready. Survey submissions still succeed if the tracker is not yet migrated.
@@ -33,5 +41,11 @@ export async function onRequestPost({request, env}) {
     } catch (_) { /* Tracker migration is optional; never block a valid survey submission. */ }
 
     return json({ok:true, id}, 201);
-  } catch (e) { return json({error:"We could not save your response. Please try again later."}, 500); }
+  } catch (e) {
+    try {
+      const existing = await env.DB.prepare("SELECT 1 AS found FROM survey_ip_participation WHERE ip_hash = ? LIMIT 1").bind(participationHash).first();
+      if (existing) return json({error:"A survey response has already been submitted from this internet connection. Each participant may submit only once across both survey links.", alreadyParticipated:true}, 409);
+    } catch (_) { /* The setup guide explains the required one-time D1 migration. */ }
+    return json({error:"We could not save your response. Please check that the duplicate-prevention migration and secret are configured, then try again."}, 503);
+  }
 }

@@ -84,3 +84,16 @@ The standard survey URL remains unchanged. The contest URL displays the prize in
 Contest administration: five winners receive US$10 each. Select winners based on eligibility, completion, and thoughtful/relevant answers—not on whether they agree with or praise FamilyGuard. The survey does not automatically select winners. Publish the contest terms, deadline, eligibility rules, winner-contact method, and payment method on Freelancer.com before sharing the link.
 
 Deploy by replacing the changed project files and publishing a new Cloudflare Pages deployment. Do not delete or recreate the D1 database. Test the contest URL and a submission before sharing it publicly.
+
+
+## One-response-per-IP duplicate prevention (required before publishing this update)
+
+This update enforces one completed survey response per Cloudflare-observed public IP across BOTH the standard and Freelancer contest links. It stores a SHA-256 hash derived from the IP and a server-side secret; it does not store the raw IP address. A browser marker also shows the already-participated message on the same browser, but the server-side check is authoritative. Shared Wi-Fi/mobile carrier networks can cause multiple people to share an IP, while VPNs or network changes can bypass an IP-only rule.
+
+Before deploying the updated site:
+1. Open Cloudflare Dashboard → D1 → `familyguard-survey-db` → Console and run `duplicate-participation-migration.sql` once. This creates a new table and does not delete existing responses or tables.
+2. In the Cloudflare Pages project, open Settings → Variables and Secrets and add a **secret** named `DUPLICATE_HASH_SECRET` with a randomly generated value of at least 32 characters. Do not put this secret in frontend code or commit it to Git.
+3. Redeploy the Pages project after the migration and secret are in place.
+4. Test with one connection: the status endpoint should return `participated: false` before a response, then both standard and contest links should show the already-participated message after a completed response. Do not use your real first response for testing unless you intend to count it.
+
+If the migration or secret is missing, the survey intentionally fails closed and displays a temporary-unavailable message rather than accepting submissions without the promised duplicate check.
