@@ -290,3 +290,9 @@ body { overflow-x:hidden; }
 .language-rtl .welcome-inner>.welcome-brand{justify-self:start!important;position:relative!important;z-index:2!important;}
 .language-rtl .welcome-content h1 span{unicode-bidi:isolate;direction:rtl;}
 .language-rtl .language-picker-wrap select{max-width:150px;}
+
+/* Arabic welcome layout: give the language picker its own row to prevent logo overlap. */
+.language-rtl .welcome-inner{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto!important;row-gap:18px!important;}
+.language-rtl .welcome-inner>.language-picker-wrap{grid-column:1!important;grid-row:1!important;justify-self:end!important;position:relative!important;right:auto!important;left:auto!important;margin:0!important;}
+.language-rtl .welcome-inner>.welcome-brand{grid-column:1!important;grid-row:2!important;justify-self:start!important;}
+.language-rtl .welcome-inner>.welcome-content{grid-column:1!important;grid-row:3!important;}

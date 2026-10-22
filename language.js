@@ -530,9 +530,7 @@ function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('family
 selector.addEventListener('change',()=>change(selector.value));
 // Re-translate after survey steps are re-rendered by the original survey controller.
 const originalText=window.setStep;document.addEventListener('click',e=>{if(e.target.closest('#nextBtn,#prevBtn'))setTimeout(()=>{const idx=Number(document.querySelector('.survey-step.active')?.dataset.step||0);if(window.FG_I18N){const t=document.getElementById('sectionTitle'),s=document.getElementById('sectionSubtitle');if(t)t.textContent=packs[current].titles[idx];if(s)s.textContent=packs[current].subtitles[idx];}},0)});
-change(current);
-const observer=new MutationObserver(records=>{for(const r of records){for(const n of r.addedNodes){if(n.nodeType===Node.TEXT_NODE){if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();if(maps[current][trim])n.nodeValue=raw.replace(trim,maps[current][trim]);}else if(n.nodeType===Node.ELEMENT_NODE&&!n.closest?.('#familyguardLanguage,.language-label'))translateTextNodes(n,maps[current]);}}});observer.observe(document.body,{childList:true,subtree:true});
-})();
+
 
 
 // Final language-label and homepage headline corrections.
@@ -572,3 +570,56 @@ Object.assign(maps.zh, {
   'Start Survey':'开始问卷',
   'Start survey':'开始问卷'
 });
+
+
+// Complete Arabic and runtime interface coverage, including participation banners and validation notices.
+Object.assign(maps.es, {
+  'Please select no more than 3 options.':'Seleccione como máximo 3 opciones.',
+  'You’ve already participated.':'Ya ha participado.',
+  'Survey temporarily unavailable':'Encuesta temporalmente no disponible',
+  'Checking participation status':'Comprobando el estado de participación',
+  'Thank you for contributing to the FamilyGuard Global Family Safety Study. Our records show that a response has already been submitted from this internet connection or browser. Only one completed response is allowed for this study.':'Gracias por contribuir al Estudio Global de Seguridad Familiar de FamilyGuard. Ya se ha enviado una respuesta desde esta conexión o navegador. Solo se permite una respuesta completada en este estudio.',
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'No podemos verificar su participación en este momento. Para proteger la integridad del estudio, la encuesta no está disponible temporalmente. Inténtelo más tarde o contacte con el equipo de investigación.',
+  'Please wait while we check whether a response has already been submitted.':'Espere mientras comprobamos si ya se ha enviado una respuesta.',
+  'No response has been submitted by this check.':'Esta comprobación no ha enviado ninguna respuesta.'
+});
+Object.assign(maps.fr, {
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'Nous ne pouvons pas vérifier votre participation pour le moment. Pour préserver l’intégrité de l’étude, le questionnaire est temporairement indisponible. Veuillez réessayer plus tard ou contacter l’équipe de recherche.',
+  'Please wait while we check whether a response has already been submitted.':'Veuillez patienter pendant que nous vérifions si une réponse a déjà été envoyée.'
+});
+Object.assign(maps.pt, {
+  'You’ve already participated.':'Já participou.',
+  'Survey temporarily unavailable':'Inquérito temporariamente indisponível',
+  'Checking participation status':'A verificar o estado da participação',
+  'Thank you for contributing to the FamilyGuard Global Family Safety Study. Our records show that a response has already been submitted from this internet connection or browser. Only one completed response is allowed for this study.':'Obrigado por contribuir para o Estudo Global de Segurança Familiar da FamilyGuard. Os nossos registos indicam que já foi enviada uma resposta através desta ligação à Internet ou deste navegador. Só é permitida uma resposta concluída neste estudo.',
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'Não é possível verificar a participação neste momento. Para proteger a integridade do estudo, o inquérito está temporariamente indisponível. Tente novamente mais tarde ou contacte a equipa de investigação.',
+  'Please wait while we check whether a response has already been submitted.':'Aguarde enquanto verificamos se já foi enviada uma resposta.',
+  'No response has been submitted by this check.':'Esta verificação não enviou qualquer resposta.'
+});
+Object.assign(maps.ar, {
+  'You’ve already participated.':'لقد شاركت بالفعل.',
+  'Survey temporarily unavailable':'الاستبيان غير متاح مؤقتًا',
+  'Checking participation status':'جارٍ التحقق من حالة المشاركة',
+  'Thank you for contributing to the FamilyGuard Global Family Safety Study. Our records show that a response has already been submitted from this internet connection or browser. Only one completed response is allowed for this study.':'شكرًا لمساهمتك في الدراسة العالمية للسلامة الأسرية من FamilyGuard. تشير سجلاتنا إلى أنه تم إرسال إجابة بالفعل من خلال اتصال الإنترنت هذا أو هذا المتصفح. يُسمح بإجابة مكتملة واحدة فقط في هذه الدراسة.',
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'يتعذر علينا التحقق من المشاركة حاليًا. وللحفاظ على نزاهة الدراسة، فإن الاستبيان غير متاح مؤقتًا. يُرجى المحاولة لاحقًا أو التواصل مع فريق البحث.',
+  'Please wait while we check whether a response has already been submitted.':'يرجى الانتظار ريثما نتحقق مما إذا كانت قد أُرسلت إجابة من قبل.',
+  'No response has been submitted by this check.':'لم تُرسل أي إجابة نتيجة لهذا التحقق.',
+  'RESPONSE RECEIVED':'تم استلام الإجابة',
+  'THANK YOU FOR YOUR INTEREST':'شكرًا لاهتمامك',
+  'Thank you for stopping by.':'شكرًا لزيارتك.',
+  'Thank you — your contest entry is recorded.':'شكرًا لك، تم تسجيل مشاركتك في المسابقة.',
+  'FREELANCER CONTEST ENTRY CONFIRMED':'تم تأكيد المشاركة في مسابقة Freelancer',
+  'Submitting…':'جارٍ الإرسال…',
+  'Submit survey':'إرسال الاستبيان',
+  'Your response was submitted successfully.':'تم إرسال إجابتك بنجاح.'
+});
+Object.assign(maps.zh, {
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'目前无法核实您的参与情况。为确保研究的完整性，问卷暂时无法使用。请稍后重试或联系研究团队。',
+  'Please wait while we check whether a response has already been submitted.':'请稍候，我们正在检查是否已经提交过答复。'
+});
+
+// Apply all dictionaries only after every language patch has been registered.
+window.FG_TRANSLATE = text => (maps[current] && maps[current][String(text)]) || String(text);
+change(current);
+const observer=new MutationObserver(records=>{for(const r of records){for(const n of r.addedNodes){if(n.nodeType===Node.TEXT_NODE){if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();if(maps[current][trim])n.nodeValue=raw.replace(trim,maps[current][trim]);}else if(n.nodeType===Node.ELEMENT_NODE&&!n.closest?.('#familyguardLanguage,.language-label'))translateTextNodes(n,maps[current]);}}});observer.observe(document.body,{childList:true,subtree:true});
+})();

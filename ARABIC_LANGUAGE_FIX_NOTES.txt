@@ -1,0 +1,12 @@
+FamilyGuard multilingual and Arabic layout corrections
+
+Changes made:
+- Fixed language dictionary initialization order. The previous language.js closed its private scope before additional translation dictionaries were assigned, so those assignments referenced an inaccessible `maps` variable and could stop the remaining language setup from running.
+- Registered the extra language dictionaries before the initial translation pass.
+- Added a shared runtime translation function and applied it directly to inline validation messages and submission/error notices instead of relying only on the MutationObserver.
+- Added Arabic translations for participation status banners and common runtime messages.
+- Added missing participation-banner translations for Portuguese and improved French/Spanish/Chinese runtime coverage.
+- Adjusted the Arabic welcome layout so the language selector has its own row and cannot overlap the FamilyGuard logo.
+- Preserved answer values, survey payloads, and API routes.
+
+Before deploying: test the language selector and all six survey steps in a preview deployment. Trigger required-field warnings in each language and verify the final submit/error states. Do not delete or replace production data when testing.
