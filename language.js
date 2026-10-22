@@ -525,7 +525,7 @@ const languageAriaLabels={en:'Survey language',es:'Idioma de la encuesta',fr:'La
 let current=localStorage.getItem('familyguard-language')||'en';if(!packs[current])current='en';
 const selector=document.createElement('select');selector.id='familyguardLanguage';selector.setAttribute('aria-label',languageAriaLabels[current]);selector.innerHTML=Object.entries(packs).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');selector.value=current;
 const languageHost=document.querySelector('.welcome-inner');if(languageHost){const oldLanguage=languageHost.querySelector('.language-picker-wrap');if(oldLanguage)oldLanguage.remove();const wrap=document.createElement('label');wrap.className='language-picker-wrap';wrap.setAttribute('aria-label','Choose survey language');wrap.append(document.createTextNode(languageLabels[current]+' '),selector);languageHost.prepend(wrap)}
-const originals=new WeakMap();function walkText(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode())a.push(w.currentNode);return a}function translateTextNodes(root,dict){for(const n of walkText(root)){if(n.parentElement?.closest('#familyguardLanguage,.language-label'))continue;if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();n.nodeValue=dict[trim]?raw.replace(trim,dict[trim]):raw;}}
+const originals=new WeakMap();function walkText(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode())a.push(w.currentNode);return a}function translateTextNodes(root,dict){for(const n of walkText(root)){if(n.parentElement?.closest('#familyguardLanguage,.language-label'))continue;if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();n.nodeValue=dict[trim]?raw.replace(trim,dict[trim]):raw;}translateAttributes(root,dict);}const originalAttributes=new WeakMap();function translateAttributes(root,dict){const nodes=[];if(root.nodeType===Node.ELEMENT_NODE)nodes.push(root);if(root.querySelectorAll)nodes.push(...root.querySelectorAll('[placeholder],[title],[aria-label]'));for(const el of nodes){if(el.closest?.('#familyguardLanguage,.language-label'))continue;for(const attr of ['placeholder','title','aria-label']){if(!el.hasAttribute(attr))continue;let saved=originalAttributes.get(el);if(!saved){saved={};originalAttributes.set(el,saved)}if(saved[attr]===undefined)saved[attr]=el.getAttribute(attr);const raw=saved[attr];el.setAttribute(attr,dict[raw]||raw)}}}
 function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',languageAriaLabels[current])});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeHeadlines={en:'Help shape a<br>safer digital world<br>for <span>families.</span>',es:'Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>',fr:'Contribuez à créer un<br>monde numérique plus sûr<br><span>pour les familles.</span>',pt:'Ajude a criar um<br>mundo digital mais seguro<br><span>para as famílias.</span>',ar:'ساهم في بناء عالم<br>رقمي أكثر أمانًا<br><span>للعائلات.</span>',zh:'共同打造一个<br>更安全的数字世界<br><span>为每个家庭。</span>'};const headline=welcomeHeadlines[current]||welcomeHeadlines.en;const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle)welcomeTitle.innerHTML=headline;const sideHeadline=document.querySelector('.hero-content h1');if(sideHeadline)sideHeadline.innerHTML=headline;document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
 selector.addEventListener('change',()=>change(selector.value));
 // Re-translate after survey steps are re-rendered by the original survey controller.
@@ -616,6 +616,62 @@ Object.assign(maps.ar, {
 Object.assign(maps.zh, {
   'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'目前无法核实您的参与情况。为确保研究的完整性，问卷暂时无法使用。请稍后重试或联系研究团队。',
   'Please wait while we check whether a response has already been submitted.':'请稍候，我们正在检查是否已经提交过答复。'
+});
+
+// Final consistency pass: translate dynamically generated validation messages and input attributes.
+Object.assign(maps.ar, {
+ 'Please select no more than 3 options.':'يرجى اختيار ثلاثة خيارات كحد أقصى.',
+ 'You can select up to 3 options. Your last selection was not added.':'يمكنك اختيار ثلاثة خيارات كحد أقصى. لم تتم إضافة الخيار الأخير.',
+ 'You can select up to 2 options. Your last selection was not added.':'يمكنك اختيار خيارين كحد أقصى. لم تتم إضافة الخيار الأخير.',
+ 'You can select up to 3 options.':'يمكنك اختيار ثلاثة خيارات كحد أقصى.',
+ 'You can select up to 2 options.':'يمكنك اختيار خيارين كحد أقصى.',
+ 'Tell us what you mean by Other':'يرجى توضيح ما تقصده بخيار «أخرى».',
+ 'Please specify:':'يرجى التحديد:',
+ 'Please specify what you mean by “Other” before continuing.':'يرجى توضيح ما تقصده بخيار «أخرى» قبل المتابعة.',
+ 'Choose up to two':'اختر خيارين كحد أقصى',
+ 'Choose up to two.':'اختر خيارين كحد أقصى.',
+ 'Choose up to 2.':'اختر خيارين كحد أقصى.',
+ 'Please select your country.':'يرجى اختيار بلدك.',
+ 'Please rate your level of concern.':'يرجى تقييم مستوى قلقك.',
+ 'Please tell us whether you are a parent or legal guardian.':'يرجى توضيح ما إذا كنت أحد الوالدين أو وصيًا قانونيًا.',
+ 'Please select at least one concern, or choose “No major concerns”.':'يرجى اختيار مصدر قلق واحد على الأقل، أو اختيار «لا توجد مخاوف كبيرة».',
+ 'Please select up to three concerns.':'يرجى اختيار ثلاثة مخاوف كحد أقصى.',
+ 'Please rate your satisfaction with your current tools or approaches.':'يرجى تقييم مدى رضاك عن الأدوات أو الأساليب التي تستخدمها حاليًا.',
+ 'Please answer this required question.':'يرجى الإجابة عن هذا السؤال الإلزامي.',
+ 'Please select between one and three features.':'يرجى اختيار ميزة واحدة إلى ثلاث ميزات.',
+ 'Please select one or two concerns about using the product.':'يرجى اختيار مصدر قلق واحد أو مصدرَي قلق بشأن استخدام المنتج.',
+ 'Please answer this required pricing question.':'يرجى الإجابة عن سؤال التسعير الإلزامي.',
+ 'Please select your preferred billing option.':'يرجى اختيار طريقة الدفع المفضلة لديك.',
+ 'Please select one or two factors that would influence your decision.':'يرجى اختيار عامل أو عاملين قد يؤثران في قرارك.',
+ 'Enter a valid email address, such as name@example.com.':'يرجى إدخال عنوان بريد إلكتروني صحيح، مثل name@example.com.',
+ 'Please confirm that you agree to receive the survey report by email.':'يرجى تأكيد موافقتك على استلام تقرير الاستبيان عبر البريد الإلكتروني.',
+ 'Please confirm that you agree to be contacted about research or testing.':'يرجى تأكيد موافقتك على التواصل معك بشأن الأبحاث أو الاختبارات.',
+ 'Please agree to the contest entry and identity-linking notice.':'يرجى الموافقة على إشعار المشاركة في المسابقة وربط الهوية.',
+ 'Please confirm your consent before submitting.':'يرجى تأكيد موافقتك قبل الإرسال.',
+ 'Your answers will be used for FamilyGuard research and reviewed in aggregate. To help prevent duplicate entries, we check your connection’s IP address and store a one-way salted hash rather than the raw address. People sharing the same internet connection may be treated as one participant. Please make sure your written response contains no identifying or sensitive details.':'ستُستخدم إجاباتك في أبحاث FamilyGuard وستُراجع بصورة إجمالية. وللمساعدة في منع الإدخالات المكررة، نتحقق من عنوان IP الخاص باتصالك ونخزّن بصمة مشفّرة أحادية الاتجاه مع قيمة عشوائية بدلًا من العنوان نفسه. قد يُعامل الأشخاص الذين يستخدمون اتصال الإنترنت نفسه كمشارك واحد. يرجى التأكد من أن إجابتك المكتوبة لا تتضمن معلومات تعريفية أو حساسة.',
+ 'Share what would make the biggest difference for your family…':'شاركنا ما الذي سيُحدث أكبر فرق لعائلتك…',
+ 'Share what would make the biggest difference for your family':'شاركنا ما الذي سيُحدث أكبر فرق لعائلتك',
+ 'You may now close this tab.':'يمكنك الآن إغلاق علامة التبويب.',
+ 'Your response was submitted successfully.':'تم إرسال إجابتك بنجاح.',
+ 'The survey service is not connected yet. Please try again later.':'خدمة الاستبيان غير متصلة حاليًا. يرجى المحاولة مرة أخرى لاحقًا.'
+});
+Object.assign(maps.fr, {
+ 'You can select up to 3 options. Your last selection was not added.':'Vous pouvez sélectionner jusqu’à 3 options. Votre dernier choix n’a pas été ajouté.',
+ 'You can select up to 2 options. Your last selection was not added.':'Vous pouvez sélectionner jusqu’à 2 options. Votre dernier choix n’a pas été ajouté.',
+ 'Tell us what you mean by Other':'Précisez ce que vous entendez par « Autre ».',
+ 'Please specify:':'Veuillez préciser :'
+});
+Object.assign(maps.pt, {
+ 'You can select up to 3 options. Your last selection was not added.':'Pode selecionar até 3 opções. A sua última seleção não foi adicionada.',
+ 'You can select up to 2 options. Your last selection was not added.':'Pode selecionar até 2 opções. A sua última seleção não foi adicionada.',
+ 'Tell us what you mean by Other':'Explique o que quer dizer com «Outro».',
+ 'Please specify:':'Especifique:'
+});
+Object.assign(maps.es, {
+ 'You can select up to 3 options. Your last selection was not added.':'Puede seleccionar hasta 3 opciones. No se añadió la última selección.',
+ 'You can select up to 2 options. Your last selection was not added.':'Puede seleccionar hasta 2 opciones. No se añadió la última selección.',
+ 'Tell us what you mean by Other':'Explique qué quiere decir con «Otro».',
+ 'Please specify:':'Especifique:'
 });
 
 // Apply all dictionaries only after every language patch has been registered.
