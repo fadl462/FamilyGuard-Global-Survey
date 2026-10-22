@@ -211,3 +211,8 @@ body { overflow-x:hidden; }
 .welcome-inner>.language-picker-wrap select{appearance:auto;border:1px solid #7180a9;border-radius:9px;background:#17264d;color:#fff;padding:9px 12px;font:600 12px "DM Sans",sans-serif;max-width:180px;cursor:pointer}
 .topbar-right .language{display:none}
 @media(max-width:760px){.welcome-inner>.language-picker-wrap{top:12px;right:16px;max-width:calc(100% - 32px);font-size:0}.welcome-inner>.language-picker-wrap select{max-width:150px;padding:7px 8px}.welcome-brand{padding-top:2px}}
+
+/* Language selector stays in the header at the top-right on desktop and mobile. */
+.topbar-language-picker{display:flex;align-items:center;gap:8px;margin:0;color:#dbe5ff;font-size:10px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.topbar-language-picker select{max-width:160px;min-width:112px}
+@media(max-width:760px){.topbar{padding:0 16px;gap:10px}.topbar-right{gap:5px;letter-spacing:.5px;font-size:8px}.topbar-right .top-divider,.topbar-right .live-dot,.topbar-language-picker{display:none}.topbar-language-picker{display:flex;position:absolute;right:14px;top:88px;z-index:10;background:#101638eF;padding:6px;border:1px solid #ffffff25;border-radius:10px}.topbar-language-picker select{max-width:132px;min-width:100px;font-size:11px}.welcome-brand{padding-top:0}}
