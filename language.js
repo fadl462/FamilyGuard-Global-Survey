@@ -896,6 +896,60 @@ Object.assign(maps.zh, {
  'What monthly price would you consider reasonable for a premium family digital safety plan?':'您认为优质家庭数字安全服务的合理月费是多少？'
 });
 
+
+// Final Chinese-language completeness patch: dynamic validation, consent and closing-page strings.
+Object.assign(maps.zh, {
+  'Another identity (please specify)':'其他身份（请注明）',
+  'If you wish, you can describe your identity (optional)':'如有需要，您可以描述自己的身份（选填）',
+  'Enter your description (optional)':'请输入描述（选填）',
+  'None of these':'以上都不是',
+  '“None of these” cannot be selected with other options. Your other selections have been cleared.':'“以上都不是”不能与其他选项同时选择。已清除您之前选择的其他选项。',
+  '“No specific approach” cannot be selected with other options. Your other selections have been cleared.':'“没有采用特定方法”不能与其他选项同时选择。已清除您之前选择的其他选项。',
+  'Not concerned':'不担心','A little':'有一点担心','Moderate':'中等','Very':'非常担心','Extremely':'极度担心',
+  'Not at all concerned':'完全不担心','Extremely concerned':'极度担心','Not useful':'没有帮助','Slightly':'有一点帮助',
+  'Very dissatisfied':'非常不满意','Dissatisfied':'不满意','Neutral':'一般','Satisfied':'满意','Very satisfied':'非常满意',
+  'How do you currently help protect your child online?':'您目前如何帮助保护孩子的网络安全？',
+  'How satisfied are you with your current tools or approaches?':'您对目前使用的工具或方法有多满意？',
+  'Imagine a family digital safety assistant':'想象一下家庭数字安全助手',
+  'It helps parents understand potential online risks, review content they are authorised to access, receive practical guidance, and establish age-appropriate safety rules. Features would depend on device capabilities and permissions; it would not promise secret access to private accounts or bypass platform security.':'它帮助家长了解潜在的网络风险、查看获授权访问的内容、获取实用建议，并制定适合不同年龄段的安全规则。具体功能取决于设备能力和授权；它不会承诺秘密访问私人账户或绕过平台安全机制。',
+  'Your answers will be used for FamilyGuard research and reviewed in aggregate. To help prevent duplicate entries, we check your connection’s IP address and store a one-way salted hash rather than the raw address. People sharing the same internet connection may be treated as one participant. Please make sure your written response contains no identifying or sensitive details.':'您的回答将用于 FamilyGuard 的研究，并以汇总形式进行分析。为防止重复提交，我们会检查您的网络连接 IP 地址，并保存经过加盐处理的单向哈希值，而不会保存原始地址。使用同一网络连接的人可能会被视为同一位参与者。请勿在文字回答中填写可识别个人身份的信息或敏感资料。',
+  'Before you submit':'提交前请注意',
+  'I have read the notice and voluntarily agree to submit my survey responses.':'我已阅读相关说明，并自愿同意提交问卷回答。',
+  'I have read the notice and voluntarily agree to submit my survey responses. *':'我已阅读相关说明，并自愿同意提交问卷回答。*',
+  'Choose what you’d like to hear from us about':'请选择您希望接收哪些方面的信息',
+  'These choices are optional. You can select either, both, or neither. Each email address is stored separately from your survey answers, and each purpose has its own consent.':'以下选项均为自愿选择。您可以选择其中一项、两项或都不选。电子邮件地址将与问卷回答分开保存，每种用途都需要单独征得您的同意。',
+  'Send me the overall survey report':'请向我发送问卷总体报告',
+  'Email me when the global research findings are available.':'全球研究结果公布后，请通过电子邮件通知我。',
+  'I’m interested in testing a future product':'我有兴趣测试未来的产品',
+  'Contact me about possible research or pilot testing opportunities. This is an expression of interest, not a commitment to participate.':'如有研究或试点测试机会，请与我联系。这仅表示我有兴趣，并不代表我承诺参加。',
+  'You can complete the survey without providing an email. Do not enter a child’s email address.':'您无需提供电子邮件地址也可以完成问卷。请勿填写儿童的电子邮件地址。',
+  'OPTIONAL FOLLOW-UP':'可选后续联系',
+  'Email address for the report':'接收报告的电子邮件地址',
+  'Email address for testing opportunities':'接收测试机会的电子邮件地址',
+  'I agree to receive the FamilyGuard global survey report by email. This is not consent to marketing emails.':'我同意通过电子邮件接收 FamilyGuard 全球调查报告。这并不代表我同意接收营销邮件。',
+  'I agree to be contacted about FamilyGuard research or product testing opportunities. Any actual test will require separate information and consent.':'我同意接收有关 FamilyGuard 研究或产品测试机会的联系。任何实际测试都需要另行提供信息并征得同意。',
+  'Previous':'上一步','Next':'下一步','Submit survey':'提交问卷',
+  'RESPONSE RECEIVED':'已收到问卷回答',
+  'Thank you for sharing your perspective.':'感谢您分享您的看法。',
+  'Your contribution will help us better understand families’ online safety concerns and inform the development of FamilyGuard Intelligence.':'您的参与将帮助我们更好地了解家庭对网络安全的担忧，并为 FamilyGuard Intelligence 的开发提供参考。',
+  'Your responses help shape safer digital experiences.':'您的回答将帮助我们打造更安全的数字体验。',
+  'Global voices':'汇聚全球声音','Family-first design':'以家庭为先的设计','You may now close this tab.':'您现在可以关闭此标签页。','Privacy-minded research':'注重隐私的研究',
+  'Please select your country.':'请选择您所在的国家或地区。',
+  'Please rate your level of concern.':'请评估您的担忧程度。',
+  'Please select at least one concern, or choose “No major concerns”.':'请至少选择一项担忧，或选择“没有重大担忧”。',
+  'Please select up to three concerns.':'最多选择三项担忧。',
+  'Please select at least one option.':'请至少选择一个选项。',
+  'Please select one option.':'请选择一个选项。',
+  'Please complete the required question before continuing.':'请先完成必答题，再继续。',
+  'Please wait while we check whether a response has already been submitted.':'正在检查是否已提交过问卷，请稍候。',
+  'No response has been submitted by this check.':'检查结果：尚未发现已提交的问卷。',
+  'We can’t verify participation right now. To protect the integrity of the study, the survey is temporarily unavailable. Please try again later or contact the research team.':'目前无法验证参与状态。为确保研究的完整性，问卷暂时无法使用。请稍后重试或联系研究团队。',
+  'This survey is intended for parents and legal guardians of children under 18. No survey response has been submitted.':'本问卷面向 18 岁以下儿童的父母及法定监护人。尚未提交任何问卷回答。',
+  'No personal data from children is required.':'无需提供儿童的个人信息。',
+  'You’re all set.':'一切准备就绪。',
+  'Language':'语言','Chinese':'中文','Simplified Chinese':'中文'
+});
+
 // Apply all dictionaries only after every language patch has been registered.
 window.FG_TRANSLATE = text => (maps[current] && maps[current][String(text)]) || String(text);
 change(current);

@@ -1,6 +1,13 @@
-Chinese language consistency update
+Chinese translation completeness update
 
-- Changed the language selector display name to 中文 (Chinese); locale code remains zh and copy uses Simplified Chinese.
-- Added Chinese translations for English labels, question text, answer options, rating descriptions, pricing concerns, consent/follow-up wording, validation messages, test banner and closing page identified in the screenshot review.
-- Product/brand name FamilyGuard Intelligence remains unchanged where appropriate.
-- After deploying, check all six steps and the thank-you page; any dynamically generated text not matching a dictionary key should be reported for a targeted follow-up.
+Updated language.js with a final Chinese translation coverage pass for the strings still visible in the user's screenshots, including:
+- Identity specification and optional description fields
+- Mutually exclusive option validation warnings
+- Concern/satisfaction rating labels and product concept copy
+- Submission consent and privacy notice
+- Optional follow-up email choices and consent language
+- Closing/thank-you page label and feature badges
+- Common validation and participation-status messages
+- User-facing language label set to Chinese (中文)
+
+Deploy the updated language.js with the current site files. This archive contains only the updated language file and this note; it does not contain a full site bundle.
