@@ -173,6 +173,37 @@ Object.assign(maps.es,{
 'Cost':'Costo',
 'Other':'Otro'
 });
+// Final Spanish consistency pass for static sidebar, footer, consent, and confirmation text.
+Object.assign(maps.es,{
+  'for':'para',
+  'English':'Español',
+  '◎  English':'◎  Español',
+  'GLOBAL FAMILY SAFETY STUDY':'ESTUDIO GLOBAL SOBRE LA SEGURIDAD FAMILIAR',
+  'GLOBAL SURVEY · 2026':'ENCUESTA GLOBAL · 2026',
+  'Privacy-minded research':'Investigación respetuosa con la privacidad',
+  '🔒  Privacy-minded research':'🔒  Investigación respetuosa con la privacidad',
+  'Your responses help shape safer digital experiences.':'Sus respuestas ayudan a crear experiencias digitales más seguras.',
+  'Before you submit':'Antes de enviar sus respuestas',
+  'Your answers will be used for FamilyGuard research and reviewed in aggregate. To help prevent duplicate entries, we check your connection’s IP address and store a one-way salted hash rather than the raw address. People sharing the same internet connection may be treated as one participant. Please make sure your written response contains no identifying or sensitive details.':'Sus respuestas se utilizarán para la investigación de FamilyGuard y se analizarán de forma conjunta. Para evitar respuestas duplicadas, comprobamos la dirección IP de su conexión y guardamos un código hash unidireccional con sal, no la dirección original. Las personas que compartan una misma conexión a internet podrían contarse como un solo participante. Asegúrese de no incluir datos personales ni información sensible en sus respuestas.',
+  'I have read the notice and voluntarily agree to submit my survey responses. *':'He leído el aviso y acepto voluntariamente enviar mis respuestas a la encuesta. *',
+  'I have read the notice and voluntarily agree to submit my survey responses.':'He leído el aviso y acepto voluntariamente enviar mis respuestas a la encuesta.',
+  'OPTIONAL FOLLOW-UP':'CONTACTO OPCIONAL',
+  'Choose what you’d like to hear from us about':'Elija sobre qué temas desea recibir información',
+  'These choices are optional. You can select either, both, or neither. Each email address is stored separately from your survey answers, and each purpose has its own consent.':'Estas opciones son voluntarias. Puede elegir una, ambas o ninguna. Cada dirección de correo electrónico se guarda por separado de sus respuestas y cada finalidad requiere un consentimiento independiente.',
+  'I’m interested in testing a future product':'Me interesa probar un producto futuro',
+  'Previous':'Anterior',
+  'Next':'Siguiente',
+  'Submit survey':'Enviar encuesta',
+  'RESPONSE RECEIVED':'RESPUESTA RECIBIDA',
+  'Thank you for sharing your perspective.':'Gracias por compartir su opinión.',
+  'Your contribution will help us better understand families’ online safety concerns and inform the development of FamilyGuard Intelligence.':'Su contribución nos ayudará a comprender mejor las preocupaciones de las familias sobre la seguridad en línea y a orientar el desarrollo de FamilyGuard Intelligence.',
+  'Global voices':'Voces globales',
+  'Family-first design':'Diseño centrado en la familia',
+  'You may now close this tab.':'Ya puede cerrar esta pestaña.',
+  'Ayude a crear un':'Ayudemos a crear un',
+  'Ayude a crear un mundo digital más seguro':'Ayudemos a crear un mundo digital más seguro'
+});
+
 Object.assign(maps.zh,{
 'Help shape a':'共同打造一个','safer digital world':'更安全的数字世界','families.':'为每个家庭。',
 'We’re exploring how technology can help families navigate online risks with greater confidence. Your perspective will help shape what comes next.':'我们正在探索科技如何帮助家庭更有信心地应对网络风险。您的意见将帮助我们决定下一步方向。',
