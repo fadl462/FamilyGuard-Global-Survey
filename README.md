@@ -97,3 +97,7 @@ Before deploying the updated site:
 4. Test with one connection: the status endpoint should return `participated: false` before a response, then both standard and contest links should show the already-participated message after a completed response. Do not use your real first response for testing unless you intend to count it.
 
 If the migration or secret is missing, the survey intentionally fails closed and displays a temporary-unavailable message rather than accepting submissions without the promised duplicate check.
+
+
+## Temporary owner testing mode
+See `TEMPORARY_TESTING_MODE_SETUP.txt` for the private `SURVEY_TESTING_TOKEN` setup, testing URL format, and removal steps. Remove the Cloudflare secret after testing and clean up test submissions before using results.

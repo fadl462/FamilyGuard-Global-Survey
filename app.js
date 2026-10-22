@@ -1,6 +1,21 @@
 const steps=[...document.querySelectorAll(".survey-step")], indicators=[...document.querySelectorAll(".step")];
 const titleList=["About you","Your concerns","Current tools","Product concept","Pricing","Final thoughts"];
 const subtitles=["Let’s start with a few questions about you and your family.","Help us understand the online safety issues that matter to you.","Tell us what you currently use and how well it works.","Explore a possible approach to family digital safety.","Help us understand what feels fair and valuable.","One final thought before you submit."];
+// Owner-only testing token: use https://.../#test=YOUR_TOKEN. The fragment is not
+// sent to the server; move it to tab-scoped storage and immediately clear the URL.
+const TEST_TOKEN_KEY="familyguard-survey-test-token";
+try {
+  const fragment=new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const incomingTestToken=fragment.get("test");
+  if(incomingTestToken && incomingTestToken.length>=32) sessionStorage.setItem(TEST_TOKEN_KEY,incomingTestToken);
+  if(window.location.hash.includes("test=")) history.replaceState(null, "", window.location.pathname+window.location.search);
+} catch(_) {}
+function surveyRequestHeaders(extra={}) {
+  const headers={...extra};
+  try { const token=sessionStorage.getItem(TEST_TOKEN_KEY); if(token) headers["X-Survey-Test-Token"]=token; } catch(_) {}
+  return headers;
+}
+function isLocalTestMode(){try{return !!sessionStorage.getItem(TEST_TOKEN_KEY)}catch(_){return false}}
 const params=new URLSearchParams(window.location.search);
 const isFreelancerContest=params.get("source")==="freelancer-contest";
 const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelancer-contest":"-standard");
@@ -26,13 +41,13 @@ function renderParticipationGate(kind){
 async function checkParticipationBeforeOpening(){
   renderParticipationGate("checking");
   try{
-    if(localStorage.getItem(COMPLETED_KEY)==="1") { renderParticipationGate("already"); return; }
+    if(!isLocalTestMode() && localStorage.getItem(COMPLETED_KEY)==="1") { renderParticipationGate("already"); return; }
   }catch(_){}
   try{
-    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
+    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:surveyRequestHeaders({"Accept":"application/json"})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok) throw new Error(data.error||"Could not verify participation.");
-    if(data.participated){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){} renderParticipationGate("already"); return;}
+    if(data.participated && !isLocalTestMode()){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){} renderParticipationGate("already"); return;}
     participationGate?.remove(); participationGate=null;
   }catch(_){renderParticipationGate("unavailable");}
 }
@@ -208,7 +223,7 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   writeSession();
 }));
 function payload(){const data={};const names=new Set([...form.querySelectorAll("[name]")].map(x=>x.name));for(const name of names){const fields=[...form.querySelectorAll(`[name="${name}"]`)];if(fields[0]?.type==="checkbox")data[name]=selected(name);else if(fields[0]?.type==="radio")data[name]=selected(name)[0]||"";else data[name]=fields[0]?.value||""}return data}
-$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(res.status===409||result.alreadyParticipated){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){}renderParticipationGate("already");return}if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
+$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:surveyRequestHeaders({"Content-Type":"application/json"}),body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if((res.status===409||result.alreadyParticipated) && !isLocalTestMode()){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){}renderParticipationGate("already");return}if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
   try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){}
   const contactTasks=[];
   if($("wantReport").checked)contactTasks.push(fetch("/api/report-subscribers",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("reportEmail").value.trim(),consent:$("reportConsent").checked})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Report email could not be saved.");return "report"}));

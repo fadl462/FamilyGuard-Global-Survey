@@ -1,0 +1,25 @@
+FAMILYGUARD — TEMPORARY OWNER TEST MODE
+
+WHAT THIS DOES
+- Lets a holder of your private test token reopen and submit the survey repeatedly on your computer and phone.
+- Test submissions are saved in survey_responses for checking, but do NOT reserve an IP in survey_ip_participation.
+- Visitors without the token continue to use the normal one-response-per-internet-connection rule.
+
+SETUP IN CLOUDFLARE (LIVE PAGES PROJECT)
+1. Generate a random secret of at least 32 characters (64 random hex characters is a good choice). Keep it private.
+2. Cloudflare Dashboard → Workers & Pages → your FamilyGuard Global Survey Pages project → Settings → Variables and Secrets.
+3. Add a secret named SURVEY_TESTING_TOKEN and paste the random value. Do not put the token in app.js, Git, or a public post.
+4. Save and redeploy the Pages project so the Pages Functions receive the secret. Keep the existing DUPLICATE_HASH_SECRET unchanged.
+5. Open this URL on each device, replacing TOKEN with the exact secret value:
+   https://familyguard-global-survey.pages.dev/#test=TOKEN
+   If you use the Freelancer contest test, add the usual query string before the fragment, e.g. https://familyguard-global-survey.pages.dev/?source=freelancer-contest#test=TOKEN
+6. The browser reads the fragment, stores the token only for that tab session, and removes it from the address bar. Keep the token private; anyone who obtains it can use test mode.
+7. Keep the tab open while testing. If you close it, reopen the special URL. Do not give the test URL/token to participants.
+
+BEFORE PUBLIC LAUNCH
+- Remove SURVEY_TESTING_TOKEN from Cloudflare after testing and redeploy. This disables server-side test bypass.
+- Clear test submissions from the survey data before analyzing/publishing results. Do not delete real participant responses. The test responses are not automatically marked as test records in the existing schema, so carefully identify and remove only your test rows using their submission times/answers.
+- Test a normal public link without the token to confirm the duplicate restriction remains active.
+
+IMPORTANT
+This is a temporary owner testing facility, not a public test feature. Do not place the token in query parameters, page content, source files, or screenshots. The fragment is not sent in HTTP requests; the API receives it only as the X-Survey-Test-Token header after the browser reads it.
