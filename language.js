@@ -67,6 +67,59 @@ const words={
 };
 function parseMap(lang){const out={};for(const [en,packed] of Object.entries(words)){for(const item of packed.split(';')){const i=item.indexOf('|');if(item.slice(0,i)===lang)out[en]=item.slice(i+1)}}return out}
 const maps={};for(const lang of Object.keys(packs))maps[lang]=parseMap(lang);
+
+// Localized homepage copy for exact text variants used by the current HTML.
+Object.assign(maps.en, {
+  'Language':'Language'
+});
+Object.assign(maps.es, {
+  'GLOBAL SURVEY · 2026':'ENCUESTA GLOBAL · 2026',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'Estamos explorando cómo la tecnología puede ayudar a las familias a afrontar los riesgos en línea con mayor confianza. Sus respuestas nos ayudarán a orientar los próximos pasos.',
+  'Only 3 to 5 minutes':'Solo de 3 a 5 minutos',
+  'A global perspective':'Una perspectiva global',
+  'Opinions from families around the world.':'Opiniones de familias de todo el mundo.'
+});
+Object.assign(maps.fr, {
+  'GLOBAL SURVEY · 2026':'ENQUÊTE MONDIALE · 2026',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'Nous étudions comment la technologie peut aider les familles à faire face aux risques en ligne avec davantage de confiance. Vos réponses contribueront à orienter les prochaines étapes.',
+  'Only 3 to 5 minutes':'Seulement 3 à 5 minutes',
+  'A global perspective':'Une perspective mondiale',
+  'Opinions from families around the world.':'Les points de vue de familles du monde entier.',
+  'Help build a':'Contribuez à créer un',
+  'safer digital world':'monde numérique plus sûr',
+  'for families.':'pour les familles.'
+});
+Object.assign(maps.pt, {
+  'GLOBAL SURVEY · 2026':'INQUÉRITO GLOBAL · 2026',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'Estamos a explorar como a tecnologia pode ajudar as famílias a enfrentar os riscos on-line com mais confiança. As suas respostas ajudarão a orientar os próximos passos.',
+  'Only 3 to 5 minutes':'Apenas 3 a 5 minutos',
+  'A global perspective':'Uma perspetiva global',
+  'Opinions from families around the world.':'Perspetivas de famílias de todo o mundo.',
+  'Help build a':'Ajude a construir um',
+  'safer digital world':'mundo digital mais seguro',
+  'for families.':'para as famílias.'
+});
+Object.assign(maps.ar, {
+  'GLOBAL SURVEY · 2026':'الاستبيان العالمي · ٢٠٢٦',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'نستكشف كيف يمكن للتكنولوجيا مساعدة الأسر على مواجهة مخاطر الإنترنت بثقة أكبر. وستساعدنا آراؤكم في تحديد الخطوات التالية.',
+  'Only 3 to 5 minutes':'من ٣ إلى ٥ دقائق فقط',
+  'A global perspective':'منظور عالمي',
+  'Opinions from families around the world.':'آراء الأسر من جميع أنحاء العالم.',
+  'Help build a':'ساهم في بناء عالم رقمي',
+  'safer digital world':'أكثر أمانًا',
+  'for families.':'للعائلات.'
+});
+Object.assign(maps.zh, {
+  'GLOBAL SURVEY · 2026':'全球调查 · 2026',
+  "We're exploring how technology can help families face online risks with greater confidence. Your feedback will help guide our next steps.":'我们正在探索如何利用科技帮助家庭更有信心地应对网络风险。您的反馈将帮助我们确定下一步方向。',
+  'Only 3 to 5 minutes':'仅需 3 至 5 分钟',
+  'A global perspective':'全球视角',
+  'Opinions from families around the world.':'来自世界各地家庭的意见。',
+  'Help build a':'共同打造一个',
+  'safer digital world':'更安全的数字世界',
+  'for families.':'为每个家庭。'
+});
+
 // Simplified Chinese translations for key interface and survey wording.
 // Spanish-only corrections and aliases for text variants used across the welcome,
  // survey, consent, validation, and confirmation screens.
@@ -216,9 +269,9 @@ Object.assign(maps.zh,{
 });
 let current=localStorage.getItem('familyguard-language')||'en';if(!packs[current])current='en';
 const selector=document.createElement('select');selector.id='familyguardLanguage';selector.setAttribute('aria-label','Survey language');selector.innerHTML=Object.entries(packs).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');selector.value=current;
-const languageHost=document.querySelector('.welcome-inner');if(languageHost){const oldLanguage=languageHost.querySelector('.language-picker-wrap');if(oldLanguage)oldLanguage.remove();const wrap=document.createElement('label');wrap.className='language-picker-wrap';wrap.setAttribute('aria-label','Choose survey language');wrap.append(document.createTextNode(current==='es'?'Idioma ':'Language / Idioma / Langue / Idioma / 语言 / اللغة '),selector);languageHost.prepend(wrap)}
+const languageHost=document.querySelector('.welcome-inner');if(languageHost){const oldLanguage=languageHost.querySelector('.language-picker-wrap');if(oldLanguage)oldLanguage.remove();const wrap=document.createElement('label');wrap.className='language-picker-wrap';wrap.setAttribute('aria-label','Choose survey language');const languageLabels={en:'Language',es:'Idioma',fr:'Langue',pt:'Idioma',ar:'اللغة',zh:'语言'};wrap.append(document.createTextNode(languageLabels[current]+' '),selector);languageHost.prepend(wrap)}
 const originals=new WeakMap();function walkText(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode())a.push(w.currentNode);return a}function translateTextNodes(root,dict){for(const n of walkText(root)){if(n.parentElement?.closest('#familyguardLanguage,.language-label'))continue;if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();n.nodeValue=dict[trim]?raw.replace(trim,dict[trim]):raw;}}
-function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',current==='es'?'Idioma de la encuesta':'Survey language')});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle&&current==='es'){welcomeTitle.innerHTML='Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>'}else if(welcomeTitle&&current!=='en'){welcomeTitle.innerHTML=(dict['Help shape a']||'Help shape a')+'<br>'+(dict['safer digital world']||'safer digital world')+'<br><span>'+(dict['families.']||'families.')+'</span>'}else if(welcomeTitle&&current==='en')welcomeTitle.innerHTML='Help shape a<br>safer digital world<br>for <span>families.</span>';document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
+function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',current==='es'?'Idioma de la encuesta':'Survey language')});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle&&current==='es'){welcomeTitle.innerHTML='Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>'}else if(welcomeTitle&&current!=='en'){welcomeTitle.innerHTML=(dict['Help shape a']||'Help shape a')+'<br>'+(dict['safer digital world']||'safer digital world')+'<br><span>'+(dict['families.']||'families.')+'</span>'}else if(welcomeTitle&&current==='en')welcomeTitle.innerHTML='Help shape a<br>safer digital world<br>for <span>families.</span>';document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
 selector.addEventListener('change',()=>change(selector.value));
 // Re-translate after survey steps are re-rendered by the original survey controller.
 const originalText=window.setStep;document.addEventListener('click',e=>{if(e.target.closest('#nextBtn,#prevBtn'))setTimeout(()=>{const idx=Number(document.querySelector('.survey-step.active')?.dataset.step||0);if(window.FG_I18N){const t=document.getElementById('sectionTitle'),s=document.getElementById('sectionSubtitle');if(t)t.textContent=packs[current].titles[idx];if(s)s.textContent=packs[current].subtitles[idx];}},0)});
