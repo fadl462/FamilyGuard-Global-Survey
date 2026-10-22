@@ -204,3 +204,10 @@ body { overflow-x:hidden; }
 
 /* Multilingual selector and Arabic right-to-left support */
 .language-picker-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#dbe5ff;font-size:11px;font-weight:700;margin:0 0 2px;letter-spacing:.2px}.language-picker-wrap select,.topbar-right select{appearance:auto;border:1px solid #7180a9;border-radius:9px;background:#17264d;color:#fff;padding:9px 12px;font:600 12px "DM Sans",sans-serif;max-width:100%;cursor:pointer}.topbar-right select{margin-left:8px}.language-rtl{direction:rtl}.language-rtl .welcome-content,.language-rtl .hero-content,.language-rtl .q-body,.language-rtl .form-card,.language-rtl .success-panel{text-align:right}.language-rtl .question{direction:rtl}.language-rtl .form-footer{direction:rtl}.language-rtl .choice-card,.language-rtl .check-option,.language-rtl .radio-option,.language-rtl .contact-check,.language-rtl .consent-line{direction:rtl;text-align:right}.language-rtl .contact-fields{padding:12px 24px 0 0}.language-rtl .question-notice{direction:rtl}@media(max-width:760px){.topbar-right select{max-width:135px;padding:7px 8px}.language-picker-wrap{font-size:10px}.language-picker-wrap select{flex:1;min-width:150px}}
+
+/* Language selector: top-right of the welcome screen */
+.welcome-inner{position:relative}
+.welcome-inner>.language-picker-wrap{position:absolute;top:16px;right:clamp(18px,4vw,64px);z-index:5;display:flex;align-items:center;gap:8px;margin:0;color:#dbe5ff;font-size:10px;font-weight:700;letter-spacing:.2px}
+.welcome-inner>.language-picker-wrap select{appearance:auto;border:1px solid #7180a9;border-radius:9px;background:#17264d;color:#fff;padding:9px 12px;font:600 12px "DM Sans",sans-serif;max-width:180px;cursor:pointer}
+.topbar-right .language{display:none}
+@media(max-width:760px){.welcome-inner>.language-picker-wrap{top:12px;right:16px;max-width:calc(100% - 32px);font-size:0}.welcome-inner>.language-picker-wrap select{max-width:150px;padding:7px 8px}.welcome-brand{padding-top:2px}}
