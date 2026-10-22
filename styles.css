@@ -236,3 +236,10 @@ body { overflow-x:hidden; }
 .language-rtl input,.language-rtl textarea,.language-rtl select{direction:rtl;text-align:right}
 .language-rtl input[type=radio],.language-rtl input[type=checkbox]{direction:ltr}
 @media(max-width:760px){.language-rtl .welcome-inner>.language-picker-wrap{right:14px;left:auto;top:12px}.language-rtl .welcome-brand{margin-top:40px}.language-rtl .welcome-content h1{font-size:clamp(32px,8vw,46px)}}
+
+
+/* Private owner testing mode: shown only after the API confirms the token. */
+.owner-test-banner{position:sticky;top:0;z-index:1000;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:#fff4d6;border-bottom:2px solid #f0b429;color:#573b00;text-align:center;font:600 12px "DM Sans",sans-serif;box-shadow:0 4px 14px rgba(20,30,60,.10)}
+.owner-test-banner strong{display:inline-block;border-radius:6px;background:#8a5a00;color:#fff;padding:4px 7px;font-size:10px;letter-spacing:.08em}
+.owner-test-banner span{line-height:1.5}
+@media(max-width:560px){.owner-test-banner{gap:6px;padding:9px 12px;font-size:11px}.owner-test-banner strong{font-size:9px}}

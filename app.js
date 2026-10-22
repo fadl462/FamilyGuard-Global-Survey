@@ -47,6 +47,9 @@ async function checkParticipationBeforeOpening(){
     const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:surveyRequestHeaders({"Accept":"application/json"})});
     const data=await response.json().catch(()=>({}));
     if(!response.ok) throw new Error(data.error||"Could not verify participation.");
+    // Only display the banner after the server confirms the private test token.
+    const testBanner=$("ownerTestBanner");
+    if(testBanner) testBanner.classList.toggle("hidden", data.testMode !== true);
     if(data.participated && !isLocalTestMode()){try{localStorage.setItem(COMPLETED_KEY,"1")}catch(_){} renderParticipationGate("already"); return;}
     participationGate?.remove(); participationGate=null;
   }catch(_){renderParticipationGate("unavailable");}
