@@ -216,3 +216,23 @@ body { overflow-x:hidden; }
 .topbar-language-picker{display:flex;align-items:center;gap:8px;margin:0;color:#dbe5ff;font-size:10px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
 .topbar-language-picker select{max-width:160px;min-width:112px}
 @media(max-width:760px){.topbar{padding:0 16px;gap:10px}.topbar-right{gap:5px;letter-spacing:.5px;font-size:8px}.topbar-right .top-divider,.topbar-right .live-dot,.topbar-language-picker{display:none}.topbar-language-picker{display:flex;position:absolute;right:14px;top:88px;z-index:10;background:#101638eF;padding:6px;border:1px solid #ffffff25;border-radius:10px}.topbar-language-picker select{max-width:132px;min-width:100px;font-size:11px}.welcome-brand{padding-top:0}}
+
+
+/* Final language layout corrections: keep the brand mark left-to-right while Arabic content reads right-to-left. */
+.language-rtl .welcome-inner{direction:ltr}
+.language-rtl .welcome-brand{direction:ltr;justify-self:start;text-align:left}
+.language-rtl .language-picker-wrap{direction:ltr}
+.language-rtl .welcome-content{direction:rtl;text-align:right}
+.language-rtl .welcome-content h1{direction:rtl;text-align:right;letter-spacing:0;line-height:1.28}
+.language-rtl .welcome-copy,.language-rtl .welcome-trust-list,.language-rtl .welcome-foot,.language-rtl .welcome-ready{text-align:right;direction:rtl}
+.language-rtl .welcome-trust-list .trust-item{direction:rtl}
+.language-rtl .welcome-trust-list .trust-item .trust-icon{flex-shrink:0}
+.language-rtl .welcome-foot{flex-direction:row-reverse}
+.language-rtl .welcome-start{direction:rtl}
+.language-rtl .hero-content{direction:rtl}
+.language-rtl .hero-content .trust-item{direction:rtl}
+.language-rtl .hero-foot{direction:rtl;flex-direction:row-reverse}
+.language-rtl .form-footer .btn b{display:inline-block;transform:scaleX(-1)}
+.language-rtl input,.language-rtl textarea,.language-rtl select{direction:rtl;text-align:right}
+.language-rtl input[type=radio],.language-rtl input[type=checkbox]{direction:ltr}
+@media(max-width:760px){.language-rtl .welcome-inner>.language-picker-wrap{right:14px;left:auto;top:12px}.language-rtl .welcome-brand{margin-top:40px}.language-rtl .welcome-content h1{font-size:clamp(32px,8vw,46px)}}
