@@ -8,6 +8,27 @@ let current=0; const form=document.getElementById("surveyForm"), notice=document
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
 if(isFreelancerContest){document.getElementById("welcomeContestNotice")?.classList.remove("hidden");}
+// Freelancer usernames always use an @ prefix. Insert it on first focus and preserve it while typing.
+const freelancerIdField=document.getElementById("freelancerId");
+if(freelancerIdField){
+  freelancerIdField.addEventListener("focus",()=>{
+    if(!freelancerIdField.value){freelancerIdField.value="@";requestAnimationFrame(()=>freelancerIdField.setSelectionRange(1,1));writeSession();}
+  });
+  freelancerIdField.addEventListener("input",()=>{
+    const before=freelancerIdField.value;
+    if(!before.startsWith("@")){
+      const start=freelancerIdField.selectionStart??before.length;
+      freelancerIdField.value="@"+before.replace(/^@+/,"");
+      const next=Math.max(1,start+1);
+      freelancerIdField.setSelectionRange(next,next);
+    } else if(before.startsWith("@@")) {
+      const start=freelancerIdField.selectionStart??before.length;
+      freelancerIdField.value="@"+before.replace(/^@+/,"");
+      const next=Math.max(1,start-(before.length-freelancerIdField.value.length));
+      freelancerIdField.setSelectionRange(next,next);
+    }
+  });
+}
 if(startSurveyBtn){startSurveyBtn.addEventListener("click",()=>{document.getElementById("welcomeScreen").classList.add("welcome-hidden");document.querySelector(".layout").classList.add("survey-visible");document.querySelector(".topbar").classList.add("survey-visible");document.body.classList.add("survey-started");writeSession({started:true,scrollY:0});window.scrollTo({top:0,behavior:"smooth"});});}
 
 function readSession(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||"null")}catch{return null}}
@@ -107,7 +128,7 @@ if(current===3){if(!selected("usefulness").length||!selected("approach").length)
 if(current===4){if(!selected("pay_likelihood").length||!selected("price").length){showQuestionError(!selected("pay_likelihood").length?"pay_likelihood":"price","Please answer this required pricing question.");return false}if(!selected("purchase_factors").length||selected("purchase_factors").length>2){showQuestionError("purchase_factors","Please select one or two factors that would influence your decision.");return false}}
 if(current===5){if($("wantReport").checked){if(!$("reportEmail").value.trim()||!$("reportEmail").checkValidity()||!$("reportConsent").checked){showQuestionError("reportEmail","For the survey report, enter a valid email and confirm the separate report consent, or untick that option.");return false}}if($("wantTesting").checked){if(!$("testingEmail").value.trim()||!$("testingEmail").checkValidity()||!$("testingConsent").checked){showQuestionError("testingEmail","For product testing interest, enter a valid email and confirm the separate testing consent, or untick that option.");return false}}}
 if(isFreelancerContest&&current===5){
-  if(!$("freelancerId").value.trim()){showQuestionError("freelancer_id","Enter your Freelancer.com user ID to submit a contest entry.");$("freelancerId").focus({preventScroll:true});return false;}
+  if(!$("freelancerId").value.trim() || $("freelancerId").value.trim()==="@"){showQuestionError("freelancer_id","Enter the username that follows the @ symbol.");$("freelancerId").focus({preventScroll:true});return false;}
   if(!$("contestConsent").checked){showQuestionError("contestConsent","Please agree to the contest entry and identity-linking notice.");return false;}
 }
 return true}

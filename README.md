@@ -79,7 +79,7 @@ After deploying the updated files, use this dedicated contest URL:
 
 `https://familyguard-global-survey.pages.dev/?source=freelancer-contest`
 
-The standard survey URL remains unchanged. The contest URL displays the prize information at the welcome screen and requires an eligible respondent to complete the required survey questions, enter a Freelancer.com user ID, and consent to linking that ID to their survey response for contest administration. The successful confirmation displays the ID for a screenshot. Contest source and Freelancer ID are stored in `answers_json` and included in the admin export. No D1 schema migration is needed for these fields.
+The standard survey URL remains unchanged. The contest URL displays the prize information at the welcome screen and requires an eligible respondent to complete the required survey questions, enter their Freelancer.com username (the @ symbol is inserted automatically), and consent to linking that ID to their survey response for contest administration. The successful confirmation displays the ID for a screenshot. Contest source and Freelancer ID are stored in `answers_json` and included in the admin export. No D1 schema migration is needed for these fields.
 
 Contest administration: five winners receive US$10 each. Select winners based on eligibility, completion, and thoughtful/relevant answers—not on whether they agree with or praise FamilyGuard. The survey does not automatically select winners. Publish the contest terms, deadline, eligibility rules, winner-contact method, and payment method on Freelancer.com before sharing the link.
 
