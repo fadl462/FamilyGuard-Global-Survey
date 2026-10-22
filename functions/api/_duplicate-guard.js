@@ -14,8 +14,10 @@ export async function getParticipationHash(request, env) {
 // Temporary owner-only test mode. The token is stored only in a Cloudflare secret
 // and supplied by the browser in a request header, never in a request URL.
 export function isAuthorizedTestRequest(request, env) {
-  const expected = env.SURVEY_TESTING_TOKEN;
-  const supplied = request.headers.get("X-Survey-Test-Token");
-  return typeof expected === "string" && expected.length >= 32 &&
-    typeof supplied === "string" && supplied.length >= 32 && supplied === expected;
+  // Cloudflare secrets are sometimes pasted with a trailing newline or spaces.
+  // Normalize surrounding whitespace without weakening the minimum-length check.
+  const expected = typeof env.SURVEY_TESTING_TOKEN === "string" ? env.SURVEY_TESTING_TOKEN.trim() : "";
+  const suppliedHeader = request.headers.get("X-Survey-Test-Token");
+  const supplied = typeof suppliedHeader === "string" ? suppliedHeader.trim() : "";
+  return expected.length >= 32 && supplied.length >= 32 && supplied === expected;
 }

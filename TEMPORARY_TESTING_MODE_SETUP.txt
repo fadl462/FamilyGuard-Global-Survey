@@ -23,3 +23,11 @@ BEFORE PUBLIC LAUNCH
 
 IMPORTANT
 This is a temporary owner testing facility, not a public test feature. Do not place the token in query parameters, page content, source files, or screenshots. The fragment is not sent in HTTP requests; the API receives it only as the X-Survey-Test-Token header after the browser reads it.
+
+
+TROUBLESHOOTING IF THE RESPONSE SAYS testMode:false
+- Confirm the exact token in the browser's private fragment matches the Cloudflare SURVEY_TESTING_TOKEN secret. Do not include spaces or quotes.
+- The token shown in browser Network screenshots should be treated as exposed. Generate a new token and replace the Cloudflare secret before continuing.
+- Ensure the latest GitHub commit containing functions/api/_duplicate-guard.js, functions/api/participation-status.js, functions/api/responses.js, and app.js is deployed to Production.
+- After changing a Production secret, trigger a new Production deployment.
+- In Network → participation-status → Response, the expected response for a valid test token is {"participated":false,"testMode":true}. If it still says false, stop and recheck the secret and deployment.
