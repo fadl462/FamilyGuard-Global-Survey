@@ -41,6 +41,92 @@ const missingCountry=data.filter(r=>!r.country).length,missingConsent=data.filte
 }
 async function loadData(){const refresh=document.getElementById('refresh');refresh.disabled=true;document.getElementById('updated').textContent='Refreshing live data…';try{[surveyRows,reportRows,testerRows]=await Promise.all([getCSV('survey'),getCSV('report'),getCSV('testers')]);renderDashboard();statusEl.textContent='';}catch(e){document.getElementById('updated').textContent='Refresh failed';statusEl.textContent='Could not load dashboard data. '+e.message;statusEl.className='status error';}finally{refresh.disabled=false;}}
 document.getElementById('countryFilter').addEventListener('change',renderDashboard);document.getElementById('refresh').addEventListener('click',loadData);document.getElementById('downloadTop').addEventListener('click',()=>document.getElementById('exportSection').scrollIntoView({behavior:'smooth',block:'center'}));
-btn.addEventListener('click',async()=>{if(tokenInput.value.trim().length<20){statusEl.textContent='Enter the valid admin token first.';return;}persistTokenPreference();if(!window.XLSX){statusEl.textContent='Excel library could not load. Check your internet connection and try again.';return;}btn.disabled=true;statusEl.className='status';statusEl.textContent='Connecting securely to the database…';try{const names=[['survey','Analysis Data'],['codebook','Codebook'],['report','Report Subscribers'],['testers','Testing Interest']];const wb=XLSX.utils.book_new();for(let i=0;i<names.length;i++){statusEl.textContent=`Exporting ${names[i][1]} (${i+1} of ${names.length})…`;const rows=await getCSV(names[i][0]);const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=rows[0]?.map(h=>({wch:Math.min(42,Math.max(14,String(h||'').length+3))}))||[];if(i===0){ws['!freeze']={xSplit:3,ySplit:1};if(rows.length>1)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length-1,c:Math.max(0,rows[0].length-1)}})};}XLSX.utils.book_append_sheet(wb,ws,names[i][1]);}XLSX.writeFile(wb,`FamilyGuard_Global_Survey_${new Date().toISOString().slice(0,10)}.xlsx`);statusEl.textContent='Analysis-ready Excel workbook downloaded: all defined multi-select options have separate 1/0 columns and the Codebook documents variable labels.';await loadData();}catch(e){statusEl.textContent='Export failed. '+e.message+'\n\nConfirm the token matches Cloudflare Pages → Settings → Variables and Secrets → ADMIN_TOKEN.';statusEl.className='status error';}finally{btn.disabled=false;}});
+
+// Analysis export schema. Options are defined independently of current responses,
+// so options remain in the export even when nobody has selected them yet.
+const MULTI_SELECT_SCHEMA={"child_ages":[{"label":"Under 6 years","var":"age_01_under6"},{"label":"6–9 years","var":"age_02_6to9"},{"label":"10–12 years","var":"age_03_10to12"},{"label":"13–15 years","var":"age_04_13to15"},{"label":"16–17 years","var":"age_05_16to17"}],"devices":[{"label":"Smartphone","var":"dev_01_phone"},{"label":"Tablet","var":"dev_02_tablet"},{"label":"Laptop or desktop computer","var":"dev_03_laptop_pc"},{"label":"Gaming console","var":"dev_04_console"},{"label":"Smart TV","var":"dev_05_smarttv"},{"label":"Other","var":"dev_06_other"},{"label":"None of these","var":"dev_07_none"}],"concerns":[{"label":"Cyberbullying or harassment","var":"con_01_cyberbully"},{"label":"Contact from strangers or online predators","var":"con_02_strangers"},{"label":"Scams, fraud or impersonation","var":"con_03_scams_fraud"},{"label":"Sexual or age-inappropriate content","var":"con_04_sexual"},{"label":"Harmful challenges or dangerous trends","var":"con_05_harm_trends"},{"label":"Excessive screen time or unhealthy habits","var":"con_06_screen_habits"},{"label":"Violent or disturbing material","var":"con_07_violent_media"},{"label":"Gaming-related risks","var":"con_08_gaming_risks"},{"label":"Privacy and personal data exposure","var":"con_09_data_privacy"},{"label":"No major concerns","var":"con_10_no_concerns"},{"label":"Other","var":"con_11_other"}],"current_methods":[{"label":"Talk regularly about online safety","var":"meth_01_safety_talks"},{"label":"Use built-in parental controls","var":"meth_02_builtin"},{"label":"Use a third-party parental-control app","var":"meth_03_thirdapp"},{"label":"Review online activity together","var":"meth_04_review"},{"label":"Set screen-time or device-use rules","var":"meth_05_screen_rules"},{"label":"Rely mainly on child's judgement","var":"meth_06_child_judge"},{"label":"No specific approach","var":"meth_07_no_approach"},{"label":"Other","var":"meth_08_other"}],"features":[{"label":"Dashboard of potential safety concerns","var":"feat_01_safety_dash"},{"label":"Alerts about potentially harmful interactions or content","var":"feat_02_harm_alerts"},{"label":"Review authorised or submitted content","var":"feat_03_content"},{"label":"Age-appropriate safety recommendations","var":"feat_04_age_advice"},{"label":"Guidance for discussing online risks","var":"feat_05_guidance"},{"label":"Screen-time and digital wellbeing tools","var":"feat_06_wellbeing"},{"label":"Support for multiple children and devices","var":"feat_07_multi_child"},{"label":"Privacy-conscious family settings","var":"feat_08_privacy"},{"label":"Clear explanations for flagged content","var":"feat_09_flag_explain"},{"label":"Other","var":"feat_10_other"}],"barriers":[{"label":"Child privacy","var":"bar_01_child_privacy"},{"label":"Data security","var":"bar_02_data_security"},{"label":"False alerts","var":"bar_03_false_alerts"},{"label":"Cost","var":"bar_04_cost"},{"label":"Device compatibility","var":"bar_05_device_compat"},{"label":"Family trust","var":"bar_06_family_trust"},{"label":"Legal or privacy uncertainty","var":"bar_07_legal_privacy"},{"label":"Insufficient useful features","var":"bar_08_few_features"},{"label":"Nothing in particular","var":"bar_09_nothing"},{"label":"Other","var":"bar_10_other"}],"purchase_factors":[{"label":"Strong privacy and security","var":"buy_01_privacy"},{"label":"Proven usefulness and reliable results","var":"buy_02_proven"},{"label":"Affordable pricing","var":"buy_03_affordable"},{"label":"Device compatibility","var":"buy_04_device_compat"},{"label":"Easy setup and use","var":"buy_05_easy_setup"},{"label":"Trusted recommendations","var":"buy_06_trusted_recs"},{"label":"Free trial","var":"buy_07_free_trial"},{"label":"Positive reviews","var":"buy_08_reviews"},{"label":"Clear evidence it works","var":"buy_09_evidence"}]};
+const MULTI_FIELDS=Object.keys(MULTI_SELECT_SCHEMA);
+const ANALYSIS_BASE_LABELS={
+  id:'Response ID', created_at:'Submission date/time', country:'Country',
+  guardian:'Parent/guardian', gender:'Gender', gender_description:'Gender description',
+  gender_other:'Gender other', child_ages:'Child age groups', devices:'Devices',
+  concern_level:'Concern level', concerns:'Safety concerns', current_methods:'Current methods',
+  satisfaction:'Satisfaction', usefulness:'Usefulness', features:'Desired features',
+  approach:'Monitoring approach', barriers:'Barriers', pay_likelihood:'Pay likelihood',
+  price:'Price preference', purchase_factors:'Purchase factors', open_feedback:'Open feedback',
+  contest_source:'Contest source', freelancer_id:'Freelancer ID', consent:'Consent'
+};
+function splitAnswers(value) {
+  if (Array.isArray(value)) return value.map(v=>String(v).trim()).filter(Boolean);
+  return String(value??'').split(';').map(v=>v.trim()).filter(Boolean);
+}
+function safeAnalysisValue(value) {
+  const s=String(value??'').trim();
+  return s;
+}
+function makeAnalysisRows(rawRows) {
+  if (!rawRows || rawRows.length<1) return {rows:[], codebook:[]};
+  const rawHeaders=rawRows[0].map(h=>String(h??'').trim());
+  const rawData=rawRows.slice(1).filter(r=>r.some(v=>String(v??'').trim()!==''));
+  const baseHeaders=rawHeaders.filter(h=>!MULTI_FIELDS.includes(h));
+  const analysisHeaders=[];
+  const labels=[];
+  // Place each original non-multiselect field in its original order, then put
+  // each multi-select field and its option indicators adjacent to that question.
+  for (const h of rawHeaders) {
+    if (MULTI_FIELDS.includes(h)) {
+      analysisHeaders.push(h); labels.push(ANALYSIS_BASE_LABELS[h]||h);
+      for (const opt of MULTI_SELECT_SCHEMA[h]) {
+        analysisHeaders.push(opt.var); labels.push(opt.label);
+      }
+    } else {
+      analysisHeaders.push(h); labels.push(ANALYSIS_BASE_LABELS[h]||h);
+    }
+  }
+  const rows=[analysisHeaders];
+  const codebook=[['variable_name','source_question_field','response_option_or_meaning','coding','notes']];
+  for (const h of rawHeaders) {
+    if (MULTI_FIELDS.includes(h)) {
+      codebook.push([h,h,ANALYSIS_BASE_LABELS[h]||h,'Original combined response retained','See adjacent 1/0 option indicators for analysis.']);
+      for (const opt of MULTI_SELECT_SCHEMA[h]) codebook.push([opt.var,h,opt.label,'1 = selected; 0 = not selected','Numeric indicator; option retained even if no respondent selected it.']);
+    } else {
+      codebook.push([h,h,ANALYSIS_BASE_LABELS[h]||h,'Original value retained', h==='consent'?'Consent indicator; exported as numeric when possible.':'']);
+    }
+  }
+  for (const r of rawData) {
+    const obj=Object.fromEntries(rawHeaders.map((h,i)=>[h,r[i]??'']));
+    const out=[];
+    for (const h of rawHeaders) {
+      if (MULTI_FIELDS.includes(h)) {
+        const raw= obj[h];
+        out.push(raw); // keep original combined answer for audit/reference
+        const selected=new Set(splitAnswers(raw));
+        for (const opt of MULTI_SELECT_SCHEMA[h]) out.push(selected.has(opt.label)?1:0);
+      } else {
+        let v=obj[h];
+        if (['concern_level','satisfaction','usefulness','pay_likelihood','consent'].includes(h) && String(v).trim()!=='' && Number.isFinite(Number(v))) v=Number(v);
+        out.push(v);
+      }
+    }
+    rows.push(out);
+  }
+  return {rows,codebook};
+}
+function sheetWithNumericIndicators(rows) {
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  const heads=rows[0]||[];
+  const numericFields=new Set(Object.values(MULTI_SELECT_SCHEMA).flat().map(o=>o.var));
+  for(let c=0;c<heads.length;c++) {
+    if(numericFields.has(String(heads[c]))) {
+      for(let r=1;r<rows.length;r++) {
+        const cell=ws[XLSX.utils.encode_cell({r,c})];
+        if(cell && (cell.v===0 || cell.v===1)) cell.t='n';
+      }
+    }
+  }
+  return ws;
+}
+
+btn.addEventListener('click',async()=>{if(tokenInput.value.trim().length<20){statusEl.textContent='Enter the valid admin token first.';return;}persistTokenPreference();if(!window.XLSX){statusEl.textContent='Excel library could not load. Check your internet connection and try again.';return;}btn.disabled=true;statusEl.className='status';statusEl.textContent='Connecting securely to the database…';try{const names=[['survey','Survey Responses'],['report','Report Subscribers'],['testers','Testing Interest']];const wb=XLSX.utils.book_new();for(let i=0;i<names.length;i++){statusEl.textContent=`Exporting ${names[i][1]} (${i+1} of ${names.length})…`;const rawRows=await getCSV(names[i][0]);let rows=rawRows;let ws;if(i===0){const built=makeAnalysisRows(rawRows);rows=built.rows;ws=sheetWithNumericIndicators(rows);const codeWs=XLSX.utils.aoa_to_sheet(built.codebook);codeWs['!cols']=[{wch:28},{wch:26},{wch:58},{wch:34},{wch:62}];codeWs['!freeze']={xSplit:0,ySplit:1};if(built.codebook.length>1)codeWs['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:built.codebook.length-1,c:4}})};XLSX.utils.book_append_sheet(wb,codeWs,'Codebook');}else{ws=XLSX.utils.aoa_to_sheet(rawRows);rows=rawRows;}ws['!cols']=rows[0]?.map(h=>({wch:Math.min(42,Math.max(14,String(h||'').length+3))}))||[];if(i===0){ws['!freeze']={xSplit:3,ySplit:1};if(rows.length>1)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length-1,c:Math.max(0,rows[0].length-1)}})};}XLSX.utils.book_append_sheet(wb,ws,names[i][1]);}XLSX.writeFile(wb,`FamilyGuard_Global_Survey_${new Date().toISOString().slice(0,10)}.xlsx`);statusEl.textContent='Excel workbook downloaded. You can now attach it to an email to fadl_rahman3@yahoo.com.';await loadData();}catch(e){statusEl.textContent='Export failed. '+e.message+'\n\nConfirm the token matches Cloudflare Pages → Settings → Variables and Secrets → ADMIN_TOKEN.';statusEl.className='status error';}finally{btn.disabled=false;}});
 const THEME_KEY='familyguard_dashboard_theme_v1';function setTheme(theme){document.body.dataset.theme=theme;const dark=theme==='dark';document.getElementById('themeToggle').setAttribute('aria-pressed',String(dark));document.getElementById('themeIcon').textContent=dark?'☀':'☾';document.getElementById('themeLabel').textContent=dark?'Light theme':'Dark theme';try{localStorage.setItem(THEME_KEY,theme)}catch(e){}}try{setTheme(localStorage.getItem(THEME_KEY)||'light')}catch(e){setTheme('light')}document.getElementById('themeToggle').addEventListener('click',()=>setTheme(document.body.dataset.theme==='dark'?'light':'dark'));if(tokenInput.value.trim().length>=20)loadData();
 </script></body></html>

@@ -1,0 +1,9 @@
+FamilyGuard Dashboard Analysis Export Update
+
+Replace only these two files, preserving paths:
+  admin-export.html
+  functions/api/admin/export.js
+
+This update expands every configured multi-select question into one numeric 1/0 column per answer option, retains the original combined response field, includes a Codebook sheet, and ensures indicator cells are stored as numeric Excel values. It does not change the database, survey form, translations, pricing, or submission logic.
+
+The API export field list now also includes gender, gender description, and contest administration fields. No database schema or stored records are changed. Keep the repository folder structure when replacing both files.
