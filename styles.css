@@ -348,3 +348,9 @@ body { overflow-x:hidden; }
 @media (max-height: 760px) and (min-width: 761px) {
   .welcome-family-art { height: clamp(280px, 38vh, 360px) !important; }
 }
+
+
+/* Final family image framing: use the wide, face-safe artwork crop. */
+.welcome-family-art { overflow: hidden; background: #17234c; }
+.welcome-family-art img { object-fit: cover !important; object-position: center center !important; }
+@media (max-width: 760px) { .welcome-family-art img { object-position: center center !important; } }
