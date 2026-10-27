@@ -31,7 +31,7 @@ async function verifyParticipation(){
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||"We could not verify your participation status.");
     if(result.participated){
-      showParticipationGate("You have already completed this survey","Our records show that a response has already been submitted from this internet connection. To protect the integrity of the research, each connection can submit only once across the public and Freelancer survey links. Thank you for participating.");
+      showParticipationGate("You have already completed this survey","Our records show that a response has already been submitted from this internet connection. To protect the integrity of the research, each internet connection can submit only once. Thank you for participating.");
       const mark=participationGate?.querySelector(".participation-gate-mark");if(mark)mark.textContent="✓";
       return;
     }
