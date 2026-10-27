@@ -24,7 +24,7 @@ function showParticipationGate(title,message,showRetry=false){
   document.body.classList.remove("participation-verified");
 }
 async function verifyParticipation(){
-  showParticipationGate("Checking your participation status…","Please wait while we check whether you have already completed the survey.");
+  showParticipationGate("Checking your participation status…","Please wait while we securely check whether a response has already been submitted from this internet connection.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
     const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
