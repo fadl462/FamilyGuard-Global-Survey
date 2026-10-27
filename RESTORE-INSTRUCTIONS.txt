@@ -1,0 +1,14 @@
+FAMILYGUARD RESTORATION — NO EMAIL NOTIFICATIONS
+
+This ZIP contains only the files to restore from the uploaded pre-notification baseline.
+
+1. In GitHub, replace each file at the matching path with the file from this ZIP.
+2. If present in your repository, delete these notification-only files:
+   - functions/api/_owner-notification.js
+   - functions/_shared/notify.js
+   (Only delete them if they exist. The restored API files no longer import either helper.)
+3. Commit the changes and wait for Cloudflare Pages to finish deploying.
+4. Hard-refresh the survey page (Ctrl+F5). Check gender, test banner, pricing, and language selector.
+5. Check a new test submission in the existing dashboard. No notification email is sent; records continue to be saved to D1.
+
+IMPORTANT: This patch does not alter or clear the D1 database. It does not include the full website or image assets.
