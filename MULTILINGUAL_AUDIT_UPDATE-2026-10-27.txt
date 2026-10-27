@@ -1,0 +1,25 @@
+FamilyGuard Global Survey — multilingual audit update (27 October 2026)
+
+Changes in this update
+- Country dropdown visible labels are localized at runtime for Spanish, French, Portuguese, Arabic, and Chinese using the browser's Intl.DisplayNames country/region localization support.
+- Country option values remain canonical English labels for consistent country analytics and exports.
+- The “Select your country” placeholder and “Other / prefer to self-describe” option are localized.
+- Added localized text for the private test-mode banner and selected dynamically-rendered completion labels in all supported languages.
+- Updated app.js and language.js cache-busting versions so Cloudflare/browser caches request the updated files.
+
+Supported interface languages: English, Spanish, French, Portuguese, Arabic, and Simplified Chinese.
+
+Validation performed on the source bundle
+- JavaScript syntax check passed for app.js and language.js using Node.js.
+- Country list was matched against ISO country/region codes, with explicit aliases for country labels that differ from standard ISO names.
+
+Deployment and QA checklist
+1. Upload the full ZIP contents to the existing Cloudflare Pages project and deploy.
+2. Open the site in a fresh/incognito tab or hard-refresh (Ctrl+Shift+R).
+3. Change language to Arabic and confirm RTL layout, country dropdown, rating labels, all six steps, validation messages, consent, and completion page.
+4. Repeat for Chinese, Spanish, French, and Portuguese. Check country options near the beginning, middle, and end of the list.
+5. Confirm that a selected country is saved under its canonical English value in survey exports.
+6. Test required-field errors, checkbox exclusivity, next/previous navigation, and final submission in each language.
+7. Do not submit repeated production test entries unless test mode is active; clean test responses before public launch.
+
+Note: Browser-based visual QA against the live Cloudflare deployment has not been performed from this source-editing environment. The included JavaScript checks validate syntax, not every rendered string or layout. Please complete the deployment checklist before sharing the public link.

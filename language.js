@@ -646,7 +646,7 @@ let current=localStorage.getItem('familyguard-language')||'en';if(!packs[current
 const selector=document.createElement('select');selector.id='familyguardLanguage';selector.setAttribute('aria-label',languageAriaLabels[current]);selector.innerHTML=Object.entries(packs).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');selector.value=current;
 const languageHost=document.querySelector('.welcome-inner');if(languageHost){const oldLanguage=languageHost.querySelector('.language-picker-wrap');if(oldLanguage)oldLanguage.remove();const wrap=document.createElement('label');wrap.className='language-picker-wrap';wrap.setAttribute('aria-label','Choose survey language');wrap.append(document.createTextNode(languageLabels[current]+' '),selector);languageHost.prepend(wrap)}
 const originals=new WeakMap();function walkText(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const a=[];while(w.nextNode())a.push(w.currentNode);return a}function translateTextNodes(root,dict){for(const n of walkText(root)){if(n.parentElement?.closest('#familyguardLanguage,.language-label'))continue;if(!originals.has(n))originals.set(n,n.nodeValue);const raw=originals.get(n),trim=raw.trim();n.nodeValue=dict[trim]?raw.replace(trim,dict[trim]):raw;}translateAttributes(root,dict);}const originalAttributes=new WeakMap();function translateAttributes(root,dict){const nodes=[];if(root.nodeType===Node.ELEMENT_NODE)nodes.push(root);if(root.querySelectorAll)nodes.push(...root.querySelectorAll('[placeholder],[title],[aria-label]'));for(const el of nodes){if(el.closest?.('#familyguardLanguage,.language-label'))continue;for(const attr of ['placeholder','title','aria-label']){if(!el.hasAttribute(attr))continue;let saved=originalAttributes.get(el);if(!saved){saved={};originalAttributes.set(el,saved)}if(saved[attr]===undefined)saved[attr]=el.getAttribute(attr);const raw=saved[attr];el.setAttribute(attr,dict[raw]||raw)}}}
-function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',languageAriaLabels[current])});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeHeadlines={en:'Help shape a<br>safer digital world<br>for <span>families.</span>',es:'Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>',fr:'Contribuez à créer un<br>monde numérique plus sûr<br><span>pour les familles.</span>',pt:'Ajude a criar um<br>mundo digital mais seguro<br><span>para as famílias.</span>',ar:'ساهم في بناء عالم<br>رقمي أكثر أمانًا<br><span>للعائلات.</span>',zh:'共同打造一个<br>更安全的数字世界<br><span>为每个家庭。</span>'};const headline=welcomeHeadlines[current]||welcomeHeadlines.en;const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle)welcomeTitle.innerHTML=headline;const sideHeadline=document.querySelector('.hero-content h1');if(sideHeadline)sideHeadline.innerHTML=headline;document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
+function change(lang){current=packs[lang]?lang:'en';localStorage.setItem('familyguard-language',current);for(const n of walkText(document.body)){if(originals.has(n))n.nodeValue=originals.get(n)}document.documentElement.lang=current;document.documentElement.dir=packs[current].dir;const dict=maps[current];translateTextNodes(document.body,dict);translateCountryOptions(current);document.querySelectorAll('#familyguardLanguage').forEach(s=>{s.value=current;s.setAttribute('aria-label',languageAriaLabels[current])});document.querySelectorAll('.language-label').forEach(label=>{label.textContent=languageLabels[current]});const pickerLabel=document.querySelector('.language-picker-wrap');if(pickerLabel&&pickerLabel.firstChild&&pickerLabel.firstChild.nodeType===Node.TEXT_NODE)pickerLabel.firstChild.nodeValue=languageLabels[current]+' ';const titles=packs[current].titles,subs=packs[current].subtitles;window.FG_I18N={titles,subtitles:subs,language:current,partLabel:({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])};const active=document.querySelector('.survey-step.active');const idx=active?Number(active.dataset.step):0;const title=document.getElementById('sectionTitle'),subtitle=document.getElementById('sectionSubtitle'),kicker=document.getElementById('stepKicker');if(title)title.textContent=titles[idx];if(subtitle)subtitle.textContent=subs[idx];if(kicker)kicker.textContent=({en:'PART',es:'PARTE',fr:'PARTIE',pt:'PARTE',ar:'الجزء',zh:'部分'}[current])+' '+(idx+1)+' / 6';const start=document.querySelector('#startSurveyBtn span');if(start&&dict['Start Survey'])start.textContent=dict['Start Survey'];const welcomeHeadlines={en:'Help shape a<br>safer digital world<br>for <span>families.</span>',es:'Ayudemos a crear un<br>mundo digital más seguro<br><span>para las familias.</span>',fr:'Contribuez à créer un<br>monde numérique plus sûr<br><span>pour les familles.</span>',pt:'Ajude a criar um<br>mundo digital mais seguro<br><span>para as famílias.</span>',ar:'ساهم في بناء عالم<br>رقمي أكثر أمانًا<br><span>للعائلات.</span>',zh:'共同打造一个<br>更安全的数字世界<br><span>为每个家庭。</span>'};const headline=welcomeHeadlines[current]||welcomeHeadlines.en;const welcomeTitle=document.getElementById('welcomeTitle');if(welcomeTitle)welcomeTitle.innerHTML=headline;const sideHeadline=document.querySelector('.hero-content h1');if(sideHeadline)sideHeadline.innerHTML=headline;document.body.classList.toggle('language-rtl',packs[current].dir==='rtl');}
 selector.addEventListener('change',()=>change(selector.value));
 // Re-translate after survey steps are re-rendered by the original survey controller.
 const originalText=window.setStep;document.addEventListener('click',e=>{if(e.target.closest('#nextBtn,#prevBtn'))setTimeout(()=>{const idx=Number(document.querySelector('.survey-step.active')?.dataset.step||0);if(window.FG_I18N){const t=document.getElementById('sectionTitle'),s=document.getElementById('sectionSubtitle');if(t)t.textContent=packs[current].titles[idx];if(s)s.textContent=packs[current].subtitles[idx];}},0)});
@@ -960,6 +960,258 @@ Object.assign(maps.zh, {
   'You can select up to 2 options. Your last selection was not added.':'最多可选择 2 项。未添加您最后选择的选项。',
   'You can select up to 3 options. Your last selection was not added.':'最多可选择 3 项。未添加您最后选择的选项。'
 });
+
+// Final cross-language coverage for country names and runtime banners.
+// Country option values remain canonical English labels for consistent exports;
+// only their visible labels change with the selected interface language.
+const countryCodeByEnglish = {
+  "Afghanistan": "AF",
+  "Albania": "AL",
+  "Algeria": "DZ",
+  "Andorra": "AD",
+  "Angola": "AO",
+  "Antigua and Barbuda": "AG",
+  "Argentina": "AR",
+  "Armenia": "AM",
+  "Australia": "AU",
+  "Austria": "AT",
+  "Azerbaijan": "AZ",
+  "Bahamas": "BS",
+  "Bahrain": "BH",
+  "Bangladesh": "BD",
+  "Barbados": "BB",
+  "Belarus": "BY",
+  "Belgium": "BE",
+  "Belize": "BZ",
+  "Benin": "BJ",
+  "Bhutan": "BT",
+  "Bolivia": "BO",
+  "Bosnia and Herzegovina": "BA",
+  "Botswana": "BW",
+  "Brazil": "BR",
+  "Brunei": "BN",
+  "Bulgaria": "BG",
+  "Burkina Faso": "BF",
+  "Burundi": "BI",
+  "Cabo Verde": "CV",
+  "Cambodia": "KH",
+  "Cameroon": "CM",
+  "Canada": "CA",
+  "Central African Republic": "CF",
+  "Chad": "TD",
+  "Chile": "CL",
+  "China": "CN",
+  "Colombia": "CO",
+  "Comoros": "KM",
+  "Congo (Republic of the)": "CG",
+  "Costa Rica": "CR",
+  "Côte d’Ivoire": "CI",
+  "Croatia": "HR",
+  "Cuba": "CU",
+  "Cyprus": "CY",
+  "Czechia": "CZ",
+  "Democratic Republic of the Congo": "CD",
+  "Denmark": "DK",
+  "Djibouti": "DJ",
+  "Dominica": "DM",
+  "Dominican Republic": "DO",
+  "Ecuador": "EC",
+  "Egypt": "EG",
+  "El Salvador": "SV",
+  "Equatorial Guinea": "GQ",
+  "Eritrea": "ER",
+  "Estonia": "EE",
+  "Eswatini": "SZ",
+  "Ethiopia": "ET",
+  "Fiji": "FJ",
+  "Finland": "FI",
+  "France": "FR",
+  "Gabon": "GA",
+  "Gambia": "GM",
+  "Georgia": "GE",
+  "Germany": "DE",
+  "Ghana": "GH",
+  "Greece": "GR",
+  "Grenada": "GD",
+  "Guatemala": "GT",
+  "Guinea": "GN",
+  "Guinea-Bissau": "GW",
+  "Guyana": "GY",
+  "Haiti": "HT",
+  "Honduras": "HN",
+  "Hungary": "HU",
+  "Iceland": "IS",
+  "India": "IN",
+  "Indonesia": "ID",
+  "Iran": "IR",
+  "Iraq": "IQ",
+  "Ireland": "IE",
+  "Israel": "IL",
+  "Italy": "IT",
+  "Jamaica": "JM",
+  "Japan": "JP",
+  "Jordan": "JO",
+  "Kazakhstan": "KZ",
+  "Kenya": "KE",
+  "Kiribati": "KI",
+  "Kosovo": "XK",
+  "Kuwait": "KW",
+  "Kyrgyzstan": "KG",
+  "Laos": "LA",
+  "Latvia": "LV",
+  "Lebanon": "LB",
+  "Lesotho": "LS",
+  "Liberia": "LR",
+  "Libya": "LY",
+  "Liechtenstein": "LI",
+  "Lithuania": "LT",
+  "Luxembourg": "LU",
+  "Madagascar": "MG",
+  "Malawi": "MW",
+  "Malaysia": "MY",
+  "Maldives": "MV",
+  "Mali": "ML",
+  "Malta": "MT",
+  "Marshall Islands": "MH",
+  "Mauritania": "MR",
+  "Mauritius": "MU",
+  "Mexico": "MX",
+  "Micronesia": "FM",
+  "Moldova": "MD",
+  "Monaco": "MC",
+  "Mongolia": "MN",
+  "Montenegro": "ME",
+  "Morocco": "MA",
+  "Mozambique": "MZ",
+  "Myanmar": "MM",
+  "Namibia": "NA",
+  "Nauru": "NR",
+  "Nepal": "NP",
+  "Netherlands": "NL",
+  "New Zealand": "NZ",
+  "Nicaragua": "NI",
+  "Niger": "NE",
+  "Nigeria": "NG",
+  "North Korea": "KP",
+  "North Macedonia": "MK",
+  "Norway": "NO",
+  "Oman": "OM",
+  "Pakistan": "PK",
+  "Palau": "PW",
+  "Palestine": "PS",
+  "Panama": "PA",
+  "Papua New Guinea": "PG",
+  "Paraguay": "PY",
+  "Peru": "PE",
+  "Philippines": "PH",
+  "Poland": "PL",
+  "Portugal": "PT",
+  "Qatar": "QA",
+  "Romania": "RO",
+  "Russia": "RU",
+  "Rwanda": "RW",
+  "Saint Kitts and Nevis": "KN",
+  "Saint Lucia": "LC",
+  "Saint Vincent and the Grenadines": "VC",
+  "Samoa": "WS",
+  "San Marino": "SM",
+  "São Tomé and Príncipe": "ST",
+  "Saudi Arabia": "SA",
+  "Senegal": "SN",
+  "Serbia": "RS",
+  "Seychelles": "SC",
+  "Sierra Leone": "SL",
+  "Singapore": "SG",
+  "Slovakia": "SK",
+  "Slovenia": "SI",
+  "Solomon Islands": "SB",
+  "Somalia": "SO",
+  "South Africa": "ZA",
+  "South Korea": "KR",
+  "South Sudan": "SS",
+  "Spain": "ES",
+  "Sri Lanka": "LK",
+  "Sudan": "SD",
+  "Suriname": "SR",
+  "Sweden": "SE",
+  "Switzerland": "CH",
+  "Syria": "SY",
+  "Taiwan": "TW",
+  "Tajikistan": "TJ",
+  "Tanzania": "TZ",
+  "Thailand": "TH",
+  "Timor-Leste": "TL",
+  "Togo": "TG",
+  "Tonga": "TO",
+  "Trinidad and Tobago": "TT",
+  "Tunisia": "TN",
+  "Türkiye": "TR",
+  "Turkmenistan": "TM",
+  "Tuvalu": "TV",
+  "Uganda": "UG",
+  "Ukraine": "UA",
+  "United Arab Emirates": "AE",
+  "United Kingdom": "GB",
+  "United States": "US",
+  "Uruguay": "UY",
+  "Uzbekistan": "UZ",
+  "Vanuatu": "VU",
+  "Vatican City": "VA",
+  "Venezuela": "VE",
+  "Vietnam": "VN",
+  "Yemen": "YE",
+  "Zambia": "ZM",
+  "Zimbabwe": "ZW",
+  'Other / prefer to self-describe': 'OTHER'
+};
+const countryOtherLabels = {
+  en:'Other / prefer to self-describe', es:'Otro / prefiero describirlo',
+  fr:'Autre / je préfère préciser', pt:'Outro / prefiro especificar',
+  ar:'أخرى / أفضل التوضيح بنفسي', zh:'其他 / 我想自行说明'
+};
+const countryDisplayNames = {};
+for (const lang of ['es','fr','pt','ar','zh']) {
+  try { countryDisplayNames[lang] = new Intl.DisplayNames([lang], {type:'region'}); } catch (_) {}
+}
+function translateCountryOptions(lang) {
+  const select = document.getElementById('country');
+  if (!select) return;
+  for (const option of select.options) {
+    if (!option.dataset.englishLabel) {
+      option.dataset.englishLabel = option.textContent.trim();
+      if (option.value && option.value !== '') option.value = option.dataset.englishLabel;
+    }
+    const base = option.dataset.englishLabel;
+    if (!base) continue;
+    if (!base) { option.textContent = ''; continue; }
+    if (base === 'Select your country') {
+      option.textContent = ({en:'Select your country',es:'Seleccione su país',fr:'Sélectionnez votre pays',pt:'Selecione o seu país',ar:'اختر بلدك',zh:'请选择国家/地区'})[lang] || base;
+      continue;
+    }
+    if (base === 'Other / prefer to self-describe') { option.textContent = countryOtherLabels[lang] || base; continue; }
+    const code = countryCodeByEnglish[base];
+    const names = countryDisplayNames[lang];
+    if (lang === 'en') option.textContent = base;
+    else if (code === 'OTHER') option.textContent = countryOtherLabels[lang] || base;
+    else if (code && names) {
+      let localized = names.of(code);
+      // Intl.DisplayNames may return an unknown code unchanged for Kosovo.
+      if (!localized || localized === code) localized = ({
+        es:{XK:'Kosovo'},fr:{XK:'Kosovo'},pt:{XK:'Kosovo'},ar:{XK:'كوسوفو'},zh:{XK:'科索沃'}
+      }[lang] || {})[code] || base;
+      option.textContent = localized;
+    } else option.textContent = base;
+  }
+}
+
+const runtimeTranslations = {
+  es:{'TEST MODE ACTIVE':'MODO DE PRUEBA ACTIVO','Test responses only — this is not a public participant session.':'Solo respuestas de prueba: esta no es una sesión para participantes públicos.','RESPONSE RECEIVED':'RESPUESTA RECIBIDA','YOUR FREELANCER.COM USER ID':'TU ID DE USUARIO DE FREELANCER.COM','FREELANCER CONTEST ENTRY CONFIRMED':'PARTICIPACIÓN EN EL CONCURSO CONFIRMADA'},
+  fr:{'TEST MODE ACTIVE':'MODE TEST ACTIF','Test responses only — this is not a public participant session.':'Réponses de test uniquement — ceci n’est pas une session destinée au public.','RESPONSE RECEIVED':'RÉPONSE REÇUE','YOUR FREELANCER.COM USER ID':'VOTRE IDENTIFIANT FREELANCER.COM','FREELANCER CONTEST ENTRY CONFIRMED':'PARTICIPATION AU CONCOURS CONFIRMÉE'},
+  pt:{'TEST MODE ACTIVE':'MODO DE TESTE ATIVO','Test responses only — this is not a public participant session.':'Apenas respostas de teste — esta não é uma sessão para participantes públicos.','RESPONSE RECEIVED':'RESPOSTA RECEBIDA','YOUR FREELANCER.COM USER ID':'SEU ID DE UTILIZADOR FREELANCER.COM','FREELANCER CONTEST ENTRY CONFIRMED':'PARTICIPAÇÃO NO CONCURSO CONFIRMADA'},
+  ar:{'TEST MODE ACTIVE':'وضع الاختبار مفعّل','Test responses only — this is not a public participant session.':'إجابات للاختبار فقط — هذه ليست جلسة مخصصة للمشاركين من الجمهور.','RESPONSE RECEIVED':'تم استلام الإجابة','YOUR FREELANCER.COM USER ID':'معرّف المستخدم على FREELANCER.COM','FREELANCER CONTEST ENTRY CONFIRMED':'تم تأكيد المشاركة في المسابقة'},
+  zh:{'TEST MODE ACTIVE':'测试模式已启用','Test responses only — this is not a public participant session.':'仅用于测试回答——当前不是面向公众的正式参与会话。','RESPONSE RECEIVED':'已收到问卷回答','YOUR FREELANCER.COM USER ID':'您的 FREELANCER.COM 用户 ID','FREELANCER CONTEST ENTRY CONFIRMED':'竞赛参与已确认'}
+};
+for (const [lang, entries] of Object.entries(runtimeTranslations)) Object.assign(maps[lang], entries);
 
 // Apply all dictionaries only after every language patch has been registered.
 window.FG_TRANSLATE = text => (maps[current] && maps[current][String(text)]) || String(text);
