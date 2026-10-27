@@ -1231,6 +1231,17 @@ function translateCountryOptions(lang) {
   }
 }
 
+const exclusiveConcernWarning = '“No major concerns” cannot be selected with other options. Your other selections have been cleared.';
+const exclusiveConcernWarningTranslations = {
+  en: exclusiveConcernWarning,
+  es: '«Ninguna preocupación importante» no se puede seleccionar junto con otras opciones. Se han borrado las demás selecciones.',
+  fr: '« Aucune préoccupation majeure » ne peut pas être sélectionnée avec d’autres options. Vos autres sélections ont été effacées.',
+  pt: '“Nenhuma preocupação importante” não pode ser selecionada juntamente com outras opções. As suas outras seleções foram desmarcadas.',
+  ar: 'لا يمكن اختيار «لا توجد مخاوف كبيرة» مع خيارات أخرى. تم إلغاء تحديد الخيارات الأخرى.',
+  zh: '“没有特别担忧”不能与其他选项同时选择。您之前选择的其他选项已取消。'
+};
+for (const [lang, message] of Object.entries(exclusiveConcernWarningTranslations)) maps[lang][exclusiveConcernWarning] = message;
+
 const runtimeTranslations = {
   en:{'Freelancers Edition':'Freelancers Edition','Six randomly selected eligible participants will each receive US$5. Complete the survey and provide your Freelancer.com user ID at the end. Honest, thoughtful answers are encouraged; no particular viewpoint is preferred.':'Six randomly selected eligible participants will each receive US$5. Complete the survey and provide your Freelancer.com user ID at the end. Honest, thoughtful answers are encouraged; no particular viewpoint is preferred.','Complete the eligible survey and enter your Freelancer.com user ID below. Six respondents will each receive US$5. Winners will be selected based on eligibility, completion, and thoughtful, relevant answers—not on whether they agree with or praise FamilyGuard.':'Complete the eligible survey and enter your Freelancer.com user ID below. Six respondents will each receive US$5. Winners will be selected based on eligibility, completion, and thoughtful, relevant answers—not on whether they agree with or praise FamilyGuard.'},
   es:{'TEST MODE ACTIVE':'MODO DE PRUEBA ACTIVO','Test responses only — this is not a public participant session.':'Solo respuestas de prueba: esta no es una sesión para participantes públicos.','RESPONSE RECEIVED':'RESPUESTA RECIBIDA','YOUR FREELANCER.COM USER ID':'TU ID DE USUARIO DE FREELANCER.COM','FREELANCER CONTEST ENTRY CONFIRMED':'PARTICIPACIÓN EN EL CONCURSO CONFIRMADA','Freelancers Edition':'Edición para freelancers','Six randomly selected eligible participants will each receive US$5. Complete the survey and provide your Freelancer.com user ID at the end. Honest, thoughtful answers are encouraged; no particular viewpoint is preferred.':'Seis participantes elegibles seleccionados al azar recibirán US$5 cada uno. Complete la encuesta e indique al final su ID de usuario de Freelancer.com. Se valoran las respuestas sinceras y reflexivas; no se favorece ninguna opinión en particular.','Complete the eligible survey and enter your Freelancer.com user ID below. Six respondents will each receive US$5. Winners will be selected based on eligibility, completion, and thoughtful, relevant answers—not on whether they agree with or praise FamilyGuard.':'Complete la encuesta si cumple los requisitos e introduzca abajo su ID de usuario de Freelancer.com. Seis participantes recibirán US$5 cada uno mediante selección aleatoria. Las personas ganadoras se elegirán según los requisitos, la finalización y la calidad y pertinencia de las respuestas, no por estar de acuerdo con FamilyGuard ni elogiarlo.'},
