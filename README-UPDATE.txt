@@ -1,12 +1,9 @@
-FamilyGuard Freelancer confirmation layout update
+FamilyGuard Global Survey — layout-only correction
 
-Replace these files in your existing project:
-- app.js
-- styles.css
+Replace styles.css in the deployed project with this file, then commit/push and allow Cloudflare Pages to redeploy.
 
-Changes:
-- Confirmation heading reads: “Thank you — your data is recorded.”
-- Freelancer ID label is centered on its own line above the ID.
-- The ID appears centered on the next line, with the confirmation card's soft teal/blue background retained.
+Only two layout issues are addressed:
+1. The language selector stays at the top-right of the welcome/header row instead of drifting to the top-left.
+2. Question 14 price options return to a three-column grid on desktop and a two-column grid on narrow/mobile screens.
 
-No database, survey questions, or submission logic has been changed.
+No survey text, questions, translations, submission logic, or database files are changed.
