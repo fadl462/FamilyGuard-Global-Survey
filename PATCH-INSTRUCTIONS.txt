@@ -1,0 +1,28 @@
+FAMILYGUARD — STALE BROWSER PARTICIPATION FLAG FIX
+
+Updated file:
+  FamilyGuard-Global-Survey-main/app.js
+
+Cause:
+The previous app.js checked localStorage before asking the server. A browser that had previously completed the survey could therefore continue to show "You've already participated" even after the owner cleared survey_ip_participation and the other D1 tables.
+
+Fix:
+The server's /api/participation-status response is now authoritative:
+- If the server says this IP has participated, the survey remains blocked.
+- If the server says no participation record exists, the stale localStorage completion flag is removed and the survey can open.
+- The private test-token mechanism and normal server-side one-submission-per-IP rule are preserved.
+- No database schema or survey content is changed.
+
+Deploy:
+1. Replace app.js at the path above in your project.
+2. Commit/push the change so Cloudflare Pages deploys it to Production.
+3. Open https://familyguard-global-survey.pages.dev/?source=freelancer-contest in the same browser and reload.
+4. If the old page remains cached, hard refresh with Ctrl+Shift+R.
+
+Immediate workaround before deployment:
+On the survey page, press F12 > Console and run:
+localStorage.removeItem("familyguard-survey-completed-v1");
+Then reload the page. Because the D1 participation table is currently empty, the server should allow the survey unless another deployment or storage mechanism is involved.
+
+Safety:
+Do not disable server-side duplicate checking. This patch only removes a stale browser flag when the server confirms that the IP is not recorded.
