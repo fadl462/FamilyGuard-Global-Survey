@@ -1,0 +1,14 @@
+FAMILYGUARD — FREELANCERS EDITION TEXT UPDATE
+
+Files to replace in the project:
+- index.html
+- language.js
+
+Changes:
+- Changed the contest heading to “Freelancers Edition”.
+- Changed the prize from five participants receiving US$10 each to six eligible participants receiving US$5 each.
+- Updated both the landing-page notice and the submission-page notice.
+- Updated the existing Spanish dictionary entries for these notices.
+- No survey logic, database, IP duplicate-prevention, or other survey content was changed.
+
+Deploy by replacing these two files in the project, committing/pushing to GitHub, and waiting for Cloudflare Pages to finish deploying. Then hard-refresh the site (Ctrl+Shift+R) and check both notices using the freelancer link.
