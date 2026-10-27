@@ -11,3 +11,5 @@ Updated language.js with a final Chinese translation coverage pass for the strin
 - User-facing language label set to Chinese (中文)
 
 Deploy the updated language.js with the current site files. This archive contains only the updated language file and this note; it does not contain a full site bundle.
+
+2026-10-27 update: Added Simplified Chinese labels for all country/region options in the country dropdown and completed Chinese price-option labels. Survey answer values remain the original English values internally so database exports and analysis stay consistent. The 1–5 rating scale and age/price figures intentionally use Arabic digits (1, 2, 3; 6–9; $3–5), which are standard and clearer in modern Simplified Chinese user interfaces; surrounding labels and units are translated into Chinese.
