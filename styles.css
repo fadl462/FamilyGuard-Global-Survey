@@ -419,3 +419,15 @@ body.language-rtl input[type="text"],body.language-rtl textarea,body.language-rt
 body.language-rtl input[type="checkbox"],body.language-rtl input[type="radio"]{direction:ltr;}
 body.language-rtl .form-actions,body.language-rtl .form-footer{direction:rtl;}
 @media(max-width:760px){body.language-rtl .layout{grid-template-columns:minmax(0,1fr);}body.language-rtl .hero-panel,body.language-rtl .survey-area{grid-column:1;grid-row:auto;}}
+
+
+/* Participation status gate: keep the survey hidden until the server verifies eligibility to open it. */
+body.participation-checking{overflow:hidden}
+.participation-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 20% 15%,#263c83 0,transparent 40%),linear-gradient(145deg,#101638,#182651);color:#fff}
+.participation-gate-card{width:min(100%,560px);padding:clamp(28px,5vw,52px);border:1px solid #ffffff24;border-radius:24px;background:#ffffff0d;box-shadow:0 24px 80px #0003;text-align:center;backdrop-filter:blur(12px)}
+.participation-gate-mark{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 22px;border-radius:20px;background:#45dfe31c;border:1px solid #45dfe355;color:#67f0e7;font-size:30px;font-weight:800}
+.participation-gate-kicker{font-size:10px;letter-spacing:2.2px;font-weight:800;color:#81e8ec;margin:0 0 14px}
+.participation-gate-card h1{font:800 clamp(25px,4vw,36px)/1.2 Manrope,sans-serif;letter-spacing:-.7px;margin:0 0 14px}
+.participation-gate-card>p:not(.participation-gate-kicker){font-size:14px;line-height:1.75;color:#d0d9f1;margin:0 auto;max-width:430px}
+.participation-gate-card .btn{margin-top:24px}
+body.participation-verified .participation-gate{display:none}

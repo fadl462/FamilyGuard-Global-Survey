@@ -7,6 +7,43 @@ const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelance
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
+
+// Verify participation with the server before exposing the questionnaire. The backend
+// remains authoritative and also rejects duplicate POSTs to /api/responses.
+const participationGate=$("participationGate");
+const participationGateTitle=$("participationGateTitle");
+const participationGateMessage=$("participationGateMessage");
+const participationRetryBtn=$("participationRetryBtn");
+let participationVerified=false;
+function showParticipationGate(title,message,showRetry=false){
+  if(participationGateTitle)participationGateTitle.textContent=title;
+  if(participationGateMessage)participationGateMessage.textContent=message;
+  participationRetryBtn?.classList.toggle("hidden",!showRetry);
+  participationGate?.classList.remove("hidden");
+  document.body.classList.add("participation-checking");
+  document.body.classList.remove("participation-verified");
+}
+async function verifyParticipation(){
+  showParticipationGate("Checking your participation status…","Please wait while we securely check whether a response has already been submitted from this internet connection.");
+  if(participationRetryBtn)participationRetryBtn.disabled=true;
+  try{
+    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||"We could not verify your participation status.");
+    if(result.participated){
+      showParticipationGate("You have already completed this survey","Our records show that a response has already been submitted from this internet connection. To protect the integrity of the research, each connection can submit only once across the public and Freelancer survey links. Thank you for participating.");
+      const mark=participationGate?.querySelector(".participation-gate-mark");if(mark)mark.textContent="✓";
+      return;
+    }
+    participationVerified=true;
+    document.body.classList.remove("participation-checking");
+    document.body.classList.add("participation-verified");
+    participationGate?.classList.add("hidden");
+  }catch(error){
+    showParticipationGate("We can’t verify your participation yet","To protect the survey data, the questionnaire is temporarily unavailable until the participation check succeeds. Please try again in a moment.",true);
+  }finally{if(participationRetryBtn)participationRetryBtn.disabled=false;}
+}
+participationRetryBtn?.addEventListener("click",verifyParticipation);
 if(isFreelancerContest){document.getElementById("welcomeContestNotice")?.classList.remove("hidden");}
 // Freelancer usernames always use an @ prefix. Insert it on first focus and preserve it while typing.
 const freelancerIdField=document.getElementById("freelancerId");
@@ -211,3 +248,6 @@ if(!restoreTerminal(savedState)){
 }
 
 window.addEventListener("pagehide",()=>writeSession());
+
+// Run the status check on every page load, including the public and Freelancer links.
+verifyParticipation();
