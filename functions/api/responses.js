@@ -1,4 +1,3 @@
-import { notifyNewData } from "../_shared/notify.js";
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status, headers: {"content-type":"application/json; charset=utf-8", "cache-control":"no-store"}});
 const allowed = new Set(["country","guardian","child_ages","devices","concern_level","concerns","current_methods","satisfaction","usefulness","features","approach","barriers","pay_likelihood","price","purchase_factors","open_feedback"]);
 export async function onRequestPost({request, env}) {
@@ -28,15 +27,6 @@ export async function onRequestPost({request, env}) {
         await env.DB.prepare("UPDATE survey_export_state SET ready_count = MAX(ready_count, ?) WHERE id = 'main'").bind(readyCount).run();
       }
     } catch (_) { /* Tracker migration is optional; never block a valid survey submission. */ }
-
-    // Notify after the D1 insert. Email failure must not invalidate the saved response.
-    let totalResponses = null;
-    try { totalResponses = Number((await env.DB.prepare("SELECT COUNT(*) AS total FROM survey_responses").first())?.total || 0); } catch (_) {}
-    await notifyNewData(env, {
-      kind: "survey response",
-      createdAt,
-      detail: `Country: ${clean.country}. Total survey responses currently stored: ${totalResponses ?? "not available"}.`
-    });
     return json({ok:true, id}, 201);
   } catch (e) { return json({error:"We could not save your response. Please try again later."}, 500); }
 }

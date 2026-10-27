@@ -1,0 +1,15 @@
+FamilyGuard Global Survey — email notification removal
+
+Replace these three files at the same paths in the GitHub repository:
+- functions/api/responses.js
+- functions/api/report-subscribers.js
+- functions/api/tester-interest.js
+
+These versions save records to D1 and do not send email notifications.
+The admin dashboard remains the place to review submissions.
+
+Optional cleanup:
+- You may delete functions/_shared/notify.js from the repository; it is no longer imported.
+- In Cloudflare Pages > Settings > Variables and Secrets, you may remove RESEND_API_KEY and NOTIFICATION_FROM if they were added only for these notifications.
+
+Important: this ZIP is based on the source ZIP provided on 27 October 2026. That source ZIP already does not contain the gender question or testing-banner implementation visible in earlier screenshots. This update intentionally does not invent those missing parts or alter pricing/multilingual files.

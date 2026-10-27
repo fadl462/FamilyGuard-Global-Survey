@@ -1,4 +1,3 @@
-import { notifyNewData } from "../_shared/notify.js";
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status, headers: {"content-type":"application/json; charset=utf-8", "cache-control":"no-store"}});
 export async function onRequestPost({request, env}) {
   if (!env.DB) return json({error:"Testing-interest service is not configured yet."}, 503);
@@ -9,7 +8,6 @@ export async function onRequestPost({request, env}) {
   try {
     const createdAt = new Date().toISOString();
     await env.DB.prepare("INSERT INTO tester_interest_contacts (id, created_at, email, consent) VALUES (?, ?, ?, 1)").bind(crypto.randomUUID(), createdAt, email).run();
-    await notifyNewData(env, {kind:"product-testing interest", createdAt, detail:"A new contact opted in to be contacted about product testing."});
     return json({ok:true}, 201);
   } catch (e) {
     if (String(e?.message || "").toLowerCase().includes("unique")) return json({ok:true, alreadyInterested:true}, 200);
