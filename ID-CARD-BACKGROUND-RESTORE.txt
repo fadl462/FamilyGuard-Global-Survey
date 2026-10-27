@@ -1,0 +1,3 @@
+FamilyGuard acknowledgement ID card background restore
+
+Replace styles.css with this version and deploy. This fixes the missing CSS class selector for .contest-id-confirmation and restores the centered teal-to-light-blue gradient background, subtle border, and shadow. No survey logic or stored data is changed.
