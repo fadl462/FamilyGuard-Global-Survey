@@ -1,0 +1,4 @@
+FamilyGuard Intelligence — Welcome image crop fix v2
+
+This update corrects the prior crop adjustment. It increases the image panel height and moves object-position down to 82% so more of the lower portion of the original family image (where the child appears) is visible. Applies to the welcome screen across languages and adapts to desktop/mobile.
+After deployment, hard-refresh with Ctrl+Shift+R. Confirm on desktop and phone.

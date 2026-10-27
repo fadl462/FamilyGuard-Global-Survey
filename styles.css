@@ -320,3 +320,31 @@ body { overflow-x:hidden; }
 @media (max-height: 760px) and (min-width: 761px) {
   .welcome-family-art { height: clamp(230px, 31vh, 300px); min-height: 230px; }
 }
+
+
+/* FINAL FIX v2: reveal the child by moving the crop DOWN, not up.
+   The welcome image uses object-fit: cover, so object-position must be near
+   the bottom of the source image to reveal the child's face in this artwork. */
+.welcome-family-art {
+  height: clamp(300px, 42vh, 460px) !important;
+  min-height: 300px;
+}
+.welcome-family-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 82% !important;
+}
+@media (min-width: 1200px) {
+  .welcome-family-art { height: clamp(340px, 44vh, 480px) !important; }
+}
+@media (max-width: 760px) {
+  .welcome-family-art {
+    height: clamp(250px, 36vh, 330px) !important;
+    min-height: 250px;
+  }
+  .welcome-family-art img { object-position: center 82% !important; }
+}
+@media (max-height: 760px) and (min-width: 761px) {
+  .welcome-family-art { height: clamp(280px, 38vh, 360px) !important; }
+}
