@@ -1,0 +1,10 @@
+FamilyGuard update: multilingual Freelancer contest notices and Arabic RTL layout
+
+Replace these three files in the existing project with the files in this update:
+- index.html
+- language.js
+- styles.css
+
+The welcome and final-step contest notices now use the updated Freelancers Edition wording, with six randomly selected eligible participants receiving US$5 each. The notices are translated for English, Spanish, French, Portuguese, Arabic, and Chinese. Arabic receives additional RTL alignment for the survey layout, question numbers, answer cards, pricing options, contest fields, and controls.
+
+No survey questions, submission APIs, database schemas, or stored data are changed. Deploy through the existing Cloudflare Pages/Git workflow, then hard-refresh and test all six languages, paying special attention to Arabic from the welcome page through submission confirmation.
