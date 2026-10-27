@@ -69,35 +69,18 @@ This project can flag a private export batch after every 20 new survey responses
 Important: do not put the admin token in a URL or in public frontend code. Batch export is download-on-demand after the threshold is reached, not an automatic email attachment.
 
 
-## Download a full Excel workbook
+## Email notifications for new data
 
-After deploying, open `/admin-export.html` on your survey domain. Enter the existing `ADMIN_TOKEN` secret and select **Download Excel workbook (.xlsx)**. The workbook contains three sheets: Survey Responses, Report Subscribers, and Testing Interest. It reads the existing authenticated export endpoints and does not alter the database. The workbook library loads from jsDelivr, so an internet connection is required. Keep the admin token private; do not put it in a URL or commit it to the repository.
+The site can send a notification to **fadl_rahman3@yahoo.com** whenever a new survey response, report subscription, or product-testing interest record is successfully saved. Notifications intentionally omit respondent answers and contact email addresses. Email delivery is best-effort and will not block saving a valid record.
 
-## Freelancer.com contest survey link
+### One-time setup in Cloudflare Pages
 
-After deploying the updated files, use this dedicated contest URL:
+1. Create an account with an email delivery provider such as Resend and verify a domain you control. The sender address must belong to that verified domain; do not use a Yahoo address as the sender unless the provider explicitly verifies it.
+2. In Resend, create an API key.
+3. In Cloudflare Dashboard, open **Workers & Pages → familyguard-global-survey → Settings → Variables and secrets → Production**. Add these as **Secrets** (not plain frontend variables):
+   - `RESEND_API_KEY` — the API key from Resend.
+   - `NOTIFICATION_FROM` — a sender such as `FamilyGuard Notifications <notifications@your-verified-domain.com>` using your own verified domain. Replace the example domain.
+4. Save and redeploy the Pages project. The notification recipient is configured in the server-side helper as `fadl_rahman3@yahoo.com`.
+5. Submit one test survey response and check that mailbox (including Spam/Junk). Also check the Cloudflare D1 Console to confirm the record saved.
 
-`https://familyguard-global-survey.pages.dev/?source=freelancer-contest`
-
-The standard survey URL remains unchanged. The contest URL displays the prize information at the welcome screen and requires an eligible respondent to complete the required survey questions, enter their Freelancer.com username (the @ symbol is inserted automatically), and consent to linking that ID to their survey response for contest administration. The successful confirmation displays the ID for a screenshot. Contest source and Freelancer ID are stored in `answers_json` and included in the admin export. No D1 schema migration is needed for these fields.
-
-Contest administration: five winners receive US$10 each. Select winners based on eligibility, completion, and thoughtful/relevant answers—not on whether they agree with or praise FamilyGuard. The survey does not automatically select winners. Publish the contest terms, deadline, eligibility rules, winner-contact method, and payment method on Freelancer.com before sharing the link.
-
-Deploy by replacing the changed project files and publishing a new Cloudflare Pages deployment. Do not delete or recreate the D1 database. Test the contest URL and a submission before sharing it publicly.
-
-
-## One-response-per-IP duplicate prevention (required before publishing this update)
-
-This update enforces one completed survey response per Cloudflare-observed public IP across BOTH the standard and Freelancer contest links. It stores a SHA-256 hash derived from the IP and a server-side secret; it does not store the raw IP address. A browser marker also shows the already-participated message on the same browser, but the server-side check is authoritative. Shared Wi-Fi/mobile carrier networks can cause multiple people to share an IP, while VPNs or network changes can bypass an IP-only rule.
-
-Before deploying the updated site:
-1. Open Cloudflare Dashboard → D1 → `familyguard-survey-db` → Console and run `duplicate-participation-migration.sql` once. This creates a new table and does not delete existing responses or tables.
-2. In the Cloudflare Pages project, open Settings → Variables and Secrets and add a **secret** named `DUPLICATE_HASH_SECRET` with a randomly generated value of at least 32 characters. Do not put this secret in frontend code or commit it to Git.
-3. Redeploy the Pages project after the migration and secret are in place.
-4. Test with one connection: the status endpoint should return `participated: false` before a response, then both standard and contest links should show the already-participated message after a completed response. Do not use your real first response for testing unless you intend to count it.
-
-If the migration or secret is missing, the survey intentionally fails closed and displays a temporary-unavailable message rather than accepting submissions without the promised duplicate check.
-
-
-## Temporary owner testing mode
-See `TEMPORARY_TESTING_MODE_SETUP.txt` for the private `SURVEY_TESTING_TOKEN` setup, testing URL format, and removal steps. Remove the Cloudflare secret after testing and clean up test submissions before using results.
+Email delivery is not active until the provider account, sender domain, secrets, and redeployment are complete. Never put the API key in `index.html`, `app.js`, or any public repository file.
