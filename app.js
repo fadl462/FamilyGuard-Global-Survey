@@ -24,14 +24,14 @@ function showParticipationGate(title,message,showRetry=false){
   document.body.classList.remove("participation-verified");
 }
 async function verifyParticipation(){
-  showParticipationGate("Checking your participation status…","Please wait while we securely check whether a response has already been submitted from this internet connection.");
+  showParticipationGate("Checking your participation status…","Please wait while we check whether you have already completed the survey.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
     const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||"We could not verify your participation status.");
     if(result.participated){
-      showParticipationGate("You have already completed this survey","Our records show that you have already submitted a response. Thank you for taking part in the FamilyGuard Intelligence survey.");
+      showParticipationGate("You have already completed this survey","Thank you for taking part in the FamilyGuard Intelligence survey.");
       const mark=participationGate?.querySelector(".participation-gate-mark");if(mark)mark.textContent="✓";
       return;
     }
