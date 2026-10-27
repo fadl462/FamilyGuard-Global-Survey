@@ -83,7 +83,7 @@ function readSession(){try{return JSON.parse(sessionStorage.getItem(STATE_KEY)||
 function writeSession(extra={}){try{const prior=readSession()||{};sessionStorage.setItem(STATE_KEY,JSON.stringify({...prior,step:current,answers:collectFormState(),scrollY:window.scrollY,...extra}))}catch{/* Continue even when browser storage is unavailable. */}}
 function collectFormState(){const state={};form.querySelectorAll("[name]").forEach(el=>{if(el.type==="checkbox"||el.type==="radio"){if(el.checked)(state[el.name]??=[]).push(el.value)}else state[el.name]=el.value});return state}
 function restoreFormState(state){if(!state?.answers)return;form.querySelectorAll("[name]").forEach(el=>{const value=state.answers[el.name];if(el.type==="checkbox"||el.type==="radio")el.checked=Array.isArray(value)&&value.includes(el.value);else if(value!==undefined)el.value=value});[...new Set([...form.querySelectorAll('input[type="checkbox"][name]')].map(el=>el.name))].forEach(normalizeExclusiveAnswers);$("reportFields").classList.toggle("hidden",!$("wantReport").checked);$("testingFields").classList.toggle("hidden",!$("wantTesting").checked);const no=selected("guardian")[0]==="no";document.querySelectorAll(".conditional").forEach(el=>el.classList.toggle("hidden",no));syncOtherFields();syncGenderField();syncSatisfactionQuestion();syncBillingPreference()}
-function restoreTerminal(state){if(state?.terminal==="ineligible"){showEligibilityClosing();return true}if(state?.terminal==="submitted"){form.classList.add("hidden");document.querySelector(".card-heading").classList.add("hidden");document.querySelector(".progress-wrap").classList.add("hidden");$("successPanel").classList.remove("hidden");$("successPanel").querySelector(".step-kicker").textContent="RESPONSE RECEIVED";$("successPanel").querySelector("h2").textContent="Thank you for sharing your perspective.";$("successPanel").querySelector("p").textContent="Your contribution will help us better understand families’ online safety concerns and inform the development of FamilyGuard Intelligence.";$("successPanel").querySelector(".success-stats").classList.remove("hidden");$("contactResult").classList.remove("hidden");$("contactResult").textContent=state.contactMessage||"Your response was submitted successfully.";if(state.contest&&state.freelancerId){$("contactResult").classList.add("hidden");$("successPanel").querySelector(".step-kicker").textContent="FREELANCER CONTEST ENTRY CONFIRMED";$("successPanel").querySelector("h2").textContent="Thank you — your contest entry is recorded.";$("successPanel").querySelector("p").textContent="Your eligible survey response has been submitted. Take a screenshot of this confirmation, including your Freelancer.com user ID, and submit it as your contest entry on Freelancer.com.";$("successPanel").querySelector(".success-stats").classList.add("hidden");const idDisplay=$("contestIdConfirmation");idDisplay.classList.remove("hidden");idDisplay.querySelector("strong").textContent=state.freelancerId;}return true}return false}
+function restoreTerminal(state){if(state?.terminal==="ineligible"){showEligibilityClosing();return true}if(state?.terminal==="submitted"){form.classList.add("hidden");document.querySelector(".card-heading").classList.add("hidden");document.querySelector(".progress-wrap").classList.add("hidden");$("successPanel").classList.remove("hidden");$("successPanel").querySelector(".step-kicker").textContent="RESPONSE RECEIVED";$("successPanel").querySelector("h2").textContent="Thank you for sharing your perspective.";$("successPanel").querySelector("p").textContent="Your contribution will help us better understand families’ online safety concerns and inform the development of FamilyGuard Intelligence.";$("successPanel").querySelector(".success-stats").classList.remove("hidden");$("contactResult").classList.remove("hidden");$("contactResult").textContent=state.contactMessage||"Your response was submitted successfully.";if(state.contest&&state.freelancerId){$("contactResult").classList.add("hidden");$("successPanel").querySelector(".step-kicker").textContent="FREELANCER CONTEST ENTRY CONFIRMED";$("successPanel").querySelector("h2").textContent="Thank you — your data is recorded.";$("successPanel").querySelector("p").textContent="Your eligible survey response has been submitted. Take a screenshot of this confirmation, including your Freelancer.com user ID, and submit it as your contest entry on Freelancer.com.";$("successPanel").querySelector(".success-stats").classList.add("hidden");const idDisplay=$("contestIdConfirmation");idDisplay.classList.remove("hidden");idDisplay.querySelector("strong").textContent=state.freelancerId;}return true}return false}
 function setStep(n,shouldScroll=true){current=Math.max(0,Math.min(steps.length-1,n));steps.forEach((s,i)=>s.classList.toggle("active",i===current));indicators.forEach((s,i)=>{s.classList.toggle("active",i===current);s.classList.toggle("done",i<current)});$("progressFill").style.width=(current/(steps.length-1)*100)+"%";$("stepKicker").textContent=`${window.FG_I18N?.partLabel||"PART"} ${current+1} / ${steps.length}`;$("sectionTitle").textContent=window.FG_I18N?.titles?.[current]||titleList[current];$("sectionSubtitle").textContent=window.FG_I18N?.subtitles?.[current]||subtitles[current];$("prevBtn").classList.toggle("hidden",current===0);$("nextBtn").classList.toggle("hidden",current===steps.length-1);$("submitBtn").classList.toggle("hidden",current!==steps.length-1);notice.classList.add("hidden");clearQuestionErrors();syncContestUI();if(shouldScroll)document.querySelector(".survey-area").scrollIntoView({behavior:"smooth",block:"start"});writeSession();}
 function selected(name){return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(x=>x.value)}
 function clearQuestionErrors(){form.querySelectorAll(".question-notice").forEach(el=>el.remove())}
@@ -200,31 +200,18 @@ function normalizeExclusiveAnswers(groupName){
   if(!exclusive)return;
   if(exclusive.checked)boxes.forEach(box=>{if(box!==exclusive)box.checked=false;});
 }
-// Remove stale exclusive-option warnings that may remain from an older cached build.
-function clearExclusiveWarnings(){
-  form.querySelectorAll('.question-notice').forEach(node=>{
-    const text=(node.textContent||'').toLowerCase();
-    if(text.includes('cannot be selected with other options') || text.includes('不能与其他选项同时选择') || text.includes('your other selections have been cleared') || text.includes('已清除您之前选择的其他选项')) node.remove();
-  });
-}
-clearExclusiveWarnings();
 form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEventListener("change",()=>{
   const group=[...form.querySelectorAll(`input[type="checkbox"][name="${input.name}"]`)];
   const exclusive=group.find(box=>exclusiveAnswer(box.value));
   if(exclusive){
     const label=exclusiveLabel(exclusive);
     if(input===exclusive&&exclusive.checked){
-      // Selecting an exclusive option automatically clears other choices.
-      // This is a valid state, so do not display an error.
       group.forEach(box=>{if(box!==exclusive)box.checked=false;});
+      showQuestionError(input.name,`“${label}” cannot be selected with other options. Your other selections have been cleared.`);
     }else if(input!==exclusive&&input.checked&&exclusive.checked){
-      // Selecting a regular option automatically removes the exclusive choice.
-      // This is also valid and should not produce a warning.
       exclusive.checked=false;
+      showQuestionError(input.name,`“${label}” cannot be selected with other options. It has been unselected so you can choose this answer.`);
     }
-    // Clear any stale warning left by an earlier version or previous selection.
-    const question=form.querySelector(`[name="${input.name}"]`)?.closest(".question");
-    question?.querySelectorAll(":scope .question-notice").forEach(el=>el.remove());
   }
   const limits={concerns:3,features:3,barriers:2,purchase_factors:2};
   if(limits[input.name]){
@@ -235,7 +222,6 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
     }
   }
   normalizeExclusiveAnswers(input.name);
-  clearExclusiveWarnings();
   syncOtherFields();
   if(input.name==="current_methods")syncSatisfactionQuestion();
   writeSession();
@@ -251,7 +237,7 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
   if(isFreelancerContest){
     $("contactResult").classList.add("hidden");
     $("successPanel").querySelector(".step-kicker").textContent="FREELANCER CONTEST ENTRY CONFIRMED";
-    $("successPanel").querySelector("h2").textContent="Thank you — your contest entry is recorded.";
+    $("successPanel").querySelector("h2").textContent="Thank you — your data is recorded.";
     $("successPanel").querySelector("p").textContent="Your eligible survey response has been submitted. Take a screenshot of this confirmation, including your Freelancer.com user ID, and submit it as your contest entry on Freelancer.com.";
     $("successPanel").querySelector(".success-stats").classList.add("hidden");
     const idDisplay=$("contestIdConfirmation");
@@ -262,8 +248,6 @@ $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!valid
 }catch(err){showError(err.message==="Failed to fetch"?"The survey service is not connected yet. Please try again later.":err.message)}finally{btn.disabled=false;btn.innerHTML="<span>Submit survey</span> <b>↗</b>"}});
 
 setupOtherFields();
-form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>normalizeExclusiveAnswers(input.name));
-clearExclusiveWarnings();
 syncSatisfactionQuestion();
 syncContestUI();
 checkParticipationBeforeOpening();

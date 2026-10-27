@@ -1,0 +1,17 @@
+FamilyGuard Intelligence — Freelancers Edition update
+
+Files to replace in the existing project:
+- index.html
+- app.js
+- language.js
+
+Changes:
+1. Landing-page notice now says: “Six randomly selected eligible participants will each receive US$5. Complete the survey and provide your Freelancer.com user ID at the end. Honest, thoughtful answers are encouraged; no particular viewpoint is preferred.”
+2. The contest acknowledgement heading now says: “Thank you — your data is recorded.”
+3. Removed the small white background and inset shadow behind the Freelancer.com ID text. The larger teal/blue gradient card remains.
+4. Updated the French, Arabic, and Chinese translation keys for the revised acknowledgement heading.
+
+Deployment:
+Replace these three files at the same paths in the existing GitHub project, commit/push, and wait for Cloudflare Pages to deploy. Then use Ctrl+Shift+R to verify the landing notice and submit a fresh test to verify the acknowledgement page.
+
+No database, survey question, or duplicate-prevention logic was changed.
