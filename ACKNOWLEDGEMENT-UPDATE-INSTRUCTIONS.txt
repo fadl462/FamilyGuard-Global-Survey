@@ -1,0 +1,12 @@
+FAMILYGUARD ACKNOWLEDGEMENT PAGE UPDATE
+
+Files to replace in your project:
+- index.html
+- language.js
+
+Changes:
+- Updates the acknowledgement heading to “Thank you — your data is recorded.”
+- Gives the Freelancer.com ID panel a subtle teal-to-blue background, rounded border, soft shadow, and a clearer ID badge.
+- Keeps survey questions, submission logic, and database behavior unchanged.
+
+Deploy by replacing these two files in your existing GitHub project, committing/pushing, and waiting for Cloudflare Pages to finish deploying. Then hard-refresh the acknowledgement page (Ctrl+Shift+R).

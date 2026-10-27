@@ -139,7 +139,7 @@ Object.assign(maps.fr, {
   'Your response was submitted successfully.':'Votre réponse a bien été envoyée.',
   'Your survey response was saved, but a follow-up email preference could not be saved. ':'Votre réponse au questionnaire a été enregistrée, mais votre préférence de suivi par e-mail n’a pas pu être enregistrée. ',
   'Thank you for stopping by.':'Merci de votre visite.',
-  'Thank you — your contest entry is recorded.':'Merci, votre participation au concours a été enregistrée.',
+  'Thank you — your data is recorded.':'Merci, votre participation au concours a été enregistrée.',
   'Your eligible survey response has been submitted. Take a screenshot of this confirmation, including your Freelancer.com user ID, and submit it as your contest entry on Freelancer.com.':'Votre réponse admissible au questionnaire a été envoyée. Faites une capture d’écran de cette confirmation, avec votre identifiant Freelancer.com, puis envoyez-la sur Freelancer.com comme preuve de participation au concours.',
   'You’ve already participated.':'Vous avez déjà participé.',
   'Survey temporarily unavailable':'Questionnaire temporairement indisponible',
