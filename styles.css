@@ -296,3 +296,27 @@ body { overflow-x:hidden; }
 .language-rtl .welcome-inner>.language-picker-wrap{grid-column:1!important;grid-row:1!important;justify-self:end!important;position:relative!important;right:auto!important;left:auto!important;margin:0!important;}
 .language-rtl .welcome-inner>.welcome-brand{grid-column:1!important;grid-row:2!important;justify-self:start!important;}
 .language-rtl .welcome-inner>.welcome-content{grid-column:1!important;grid-row:3!important;}
+
+
+
+/* FamilyGuard welcome image enhancement — shared by every survey language.
+   Give the child more visible space and frame the family photo slightly higher. */
+.welcome-family-art {
+  height: clamp(250px, 36vh, 420px);
+}
+.welcome-family-art img {
+  object-position: center 30%;
+}
+@media (min-width: 1200px) {
+  .welcome-family-art { height: clamp(300px, 38vh, 450px); }
+}
+@media (max-width: 1050px) and (min-width: 761px) {
+  .welcome-family-art { height: clamp(250px, 32vh, 340px); }
+}
+@media (max-width: 760px) {
+  .welcome-family-art { height: clamp(230px, 34vh, 300px); min-height: 230px; }
+  .welcome-family-art img { object-position: center 30%; }
+}
+@media (max-height: 760px) and (min-width: 761px) {
+  .welcome-family-art { height: clamp(230px, 31vh, 300px); min-height: 230px; }
+}

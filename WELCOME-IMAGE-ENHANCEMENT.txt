@@ -1,0 +1,5 @@
+FamilyGuard Intelligence — Welcome Image Enhancement
+
+Updated styles.css to increase the welcome-screen family image height responsively and adjust the crop upward so the child is more clearly visible. The styles apply across all survey languages because the image is shared by the welcome screen.
+
+After deployment, hard-refresh the page (Ctrl+Shift+R) and check desktop, tablet, and phone widths.
