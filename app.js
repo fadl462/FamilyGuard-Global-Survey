@@ -7,6 +7,7 @@ const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelance
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
+if(surveyTestToken)document.getElementById("ownerTestBanner")?.classList.remove("hidden");
 
 // Verify participation with the server before exposing the questionnaire. The backend
 // remains authoritative and also rejects duplicate POSTs to /api/responses.
@@ -18,9 +19,22 @@ let participationVerified=false;
 // Device-level fallback complements the server-side IP hash. This marker is written
 // only after the server confirms a successful public submission and is shared by
 // the public and Freelancer links on this browser/origin.
-const LOCAL_COMPLETION_KEY="familyguard-survey-completed-device-v2";
-function hasLocalCompletion(){try{return localStorage.getItem(LOCAL_COMPLETION_KEY)==="1"}catch{return false}}
-function markLocalCompletion(){try{localStorage.setItem(LOCAL_COMPLETION_KEY,"1")}catch{/* Server-side duplicate protection remains active. */}}
+const LOCAL_COMPLETION_KEY="familyguard-survey-completed-device-v3";
+const TEST_TOKEN_KEY="familyguard-survey-test-token-v1";
+// Owner test access is read from the URL fragment (never sent to the server as a URL).
+// The token stays in this tab's session storage and is sent only in a request header.
+function getSurveyTestToken(){
+  try{
+    const fragment=new URLSearchParams(window.location.hash.replace(/^#/,""));
+    const fromFragment=fragment.get("test");
+    if(fromFragment){sessionStorage.setItem(TEST_TOKEN_KEY,fromFragment);history.replaceState(null,"",window.location.pathname+window.location.search);}
+    return sessionStorage.getItem(TEST_TOKEN_KEY)||"";
+  }catch{return ""}
+}
+const surveyTestToken=getSurveyTestToken();
+function apiHeaders(extra={}){const headers={...extra};if(surveyTestToken)headers["X-Survey-Test-Token"]=surveyTestToken;return headers}
+function hasLocalCompletion(){try{return localStorage.getItem(LOCAL_COMPLETION_KEY)==="1"||localStorage.getItem("familyguard-survey-completed-device-v2")==="1"}catch{return false}}
+function markLocalCompletion(){try{localStorage.setItem(LOCAL_COMPLETION_KEY,"1");localStorage.setItem("familyguard-survey-completed-device-v2","1")}catch{/* Server-side duplicate protection remains active. */}}
 function showCompletedPage(){
   showParticipationGate("You have already completed this survey","Thank you for taking part in the FamilyGuard Intelligence survey.");
   const mark=participationGate?.querySelector(".participation-gate-mark");if(mark)mark.textContent="✓";
@@ -40,7 +54,7 @@ async function verifyParticipation(){
   showParticipationGate("Checking your participation status…","Please wait while we securely check whether a response has already been submitted.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
-    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:{"Accept":"application/json"}});
+    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:apiHeaders({"Accept":"application/json"})});
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||"We could not verify your participation status.");
     if(result.participated){
@@ -228,7 +242,7 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
   writeSession();
 }));
 function payload(){const data={};const names=new Set([...form.querySelectorAll("[name]")].map(x=>x.name));for(const name of names){const fields=[...form.querySelectorAll(`[name="${name}"]`)];if(fields[0]?.type==="checkbox")data[name]=selected(name);else if(fields[0]?.type==="radio")data[name]=selected(name)[0]||"";else data[name]=fields[0]?.value||""}return data}
-$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
+$("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:apiHeaders({"Content-Type":"application/json"}),body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
    // Save a device marker only after the server confirms the survey response.
    // Test-mode responses intentionally do not lock the browser.
    if(!result.testMode)markLocalCompletion();
