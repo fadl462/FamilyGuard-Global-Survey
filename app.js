@@ -23,11 +23,15 @@ const TEST_TOKEN_KEY="familyguard-survey-test-token-v1";
 // Owner test access is read from the URL fragment (never sent to the server as a URL).
 // The token stays in this tab's session storage and is sent only in a request header.
 function getSurveyTestToken(){
+  // Test access must be explicitly supplied on this URL only. Never persist the
+  // token in sessionStorage: otherwise normal public links in the same tab can
+  // silently remain in test mode and bypass duplicate-participation checks.
   try{
     const fragment=new URLSearchParams(window.location.hash.replace(/^#/,""));
-    const fromFragment=fragment.get("test");
-    if(fromFragment){sessionStorage.setItem(TEST_TOKEN_KEY,fromFragment);history.replaceState(null,"",window.location.pathname+window.location.search);}
-    return sessionStorage.getItem(TEST_TOKEN_KEY)||"";
+    const fromFragment=fragment.get("test")||"";
+    if(fromFragment) history.replaceState(null,"",window.location.pathname+window.location.search);
+    try{sessionStorage.removeItem(TEST_TOKEN_KEY);}catch{}
+    return fromFragment;
   }catch{return ""}
 }
 const surveyTestToken=getSurveyTestToken();
@@ -50,7 +54,7 @@ function showParticipationGate(title,message,showRetry=false){
 async function verifyParticipation(){
   // A confirmed completion on this browser takes precedence if the network IP changes.
   // The shared server-side table remains authoritative across devices and browsers.
-  if(hasLocalCompletion()){showCompletedPage();return;}
+  if(!surveyTestToken && hasLocalCompletion()){showCompletedPage();return;}
   showParticipationGate("Just a moment…","We’re checking your participation.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
@@ -247,9 +251,10 @@ form.querySelectorAll('input[type="checkbox"][name]').forEach(input=>input.addEv
 }));
 function payload(){const data={};const names=new Set([...form.querySelectorAll("[name]")].map(x=>x.name));for(const name of names){const fields=[...form.querySelectorAll(`[name="${name}"]`)];if(fields[0]?.type==="checkbox")data[name]=selected(name);else if(fields[0]?.type==="radio")data[name]=selected(name)[0]||"";else data[name]=fields[0]?.value||""}return data}
 $("surveyForm").addEventListener("submit",async e=>{e.preventDefault();if(!validateStep())return;if(!$("consent").checked){showQuestionError("consent","Please confirm your consent before submitting.");return}const btn=$("submitBtn");btn.disabled=true;btn.innerHTML="<span>Submitting…</span>";try{const res=await fetch("/api/responses",{method:"POST",headers:apiHeaders({"Content-Type":"application/json"}),body:JSON.stringify({answers:payload(),consent:true,source:isFreelancerContest?"freelancer-contest":"standard",freelancer_id:isFreelancerContest?$("freelancerId").value.trim():"",contest_consent:isFreelancerContest?$("contestConsent").checked:false})});const result=await res.json().catch(()=>({}));if(!res.ok)throw new Error(result.error||"We couldn’t submit your response. Please try again.");
-   // Save a device marker only after the server confirms the survey response.
-   // Test-mode responses intentionally do not lock the browser.
-   if(!result.testMode)markLocalCompletion();
+   // A successful submission locks this browser for public links. An explicit
+   // test-token URL can still reopen the survey for authorized testing, but that
+   // token is never carried into ordinary public visits.
+   markLocalCompletion();
   const contactTasks=[];
   if($("wantReport").checked)contactTasks.push(fetch("/api/report-subscribers",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("reportEmail").value.trim(),consent:$("reportConsent").checked})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Report email could not be saved.");return "report"}));
   if($("wantTesting").checked)contactTasks.push(fetch("/api/tester-interest",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("testingEmail").value.trim(),consent:$("testingConsent").checked})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Testing interest could not be saved.");return "testing"}));

@@ -1,0 +1,18 @@
+FamilyGuard duplicate-protection fix (2026-10-28)
+
+Root cause addressed:
+The owner testing token was being saved in sessionStorage. That meant a normal public survey visit in the same browser tab could continue sending the testing token and bypass the server-side duplicate check.
+
+Changes:
+- Testing token is now read only from an explicit URL fragment (#test=YOUR_TOKEN).
+- The token is not persisted in sessionStorage and is removed from the visible address after being read.
+- A token explicitly supplied for a test visit bypasses the local completion marker so authorized testing remains possible.
+- A successful submission marks the current browser as completed, including test submissions. The explicit test-token URL remains the only way to bypass this local marker for testing.
+- Public requests without the token still depend on the Cloudflare D1 participation table for cross-device/server-side blocking.
+
+Deployment and verification:
+1. Deploy this full project to Cloudflare Pages.
+2. In the same browser, open the standard public URL without any #test=... fragment. It should no longer inherit a stale testing token.
+3. After any successful submission, reload the standard URL. The completed-survey page should appear on that browser.
+4. To test deliberately, use the authorized testing URL with the token in the URL fragment. Do not append the token to public links.
+5. Verify that survey_ip_participation contains a row for public submissions. Existing responses submitted in test mode did not create a server-side participation row; they cannot be matched to an IP retrospectively unless an authorized reconciliation is performed.
