@@ -14,23 +14,25 @@
 <body class="participation-checking">
 <div id="participationGate" class="participation-gate" role="status" aria-live="polite">
   <div class="participation-gate-card">
-    <svg class="participation-gate-logo" viewBox="0 0 760 220" role="img" aria-label="FamilyGuard Intelligence" xmlns="http://www.w3.org/2000/svg">
+    <svg class="participation-gate-logo" viewBox="0 0 640 180" role="img" aria-label="FamilyGuard Intelligence" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="fgShield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19a5ff"/><stop offset="1" stop-color="#0873ed"/></linearGradient>
         <linearGradient id="fgIntelligence" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#37c6ff"/><stop offset="1" stop-color="#1685ff"/></linearGradient>
       </defs>
-      <path d="M112 10 194 43v57c0 51-33 84-82 108-49-24-82-57-82-108V43Z" fill="url(#fgShield)"/>
-      <path d="M112 27 178 53v47c0 40-25 68-66 89-41-21-66-49-66-89V53Z" fill="#f8fbff"/>
-      <circle cx="91" cy="78" r="18" fill="#102b68"/><path d="M60 126c1-23 14-35 31-35s30 12 31 35v27H60Z" fill="#102b68"/>
-      <circle cx="137" cy="82" r="16" fill="#20ad70"/><path d="M119 125c2-20 8-31 18-31 18 0 29 13 30 33v21h-48Z" fill="#20ad70"/>
-      <circle cx="112" cy="119" r="13" fill="#fff"/><path d="M88 169v-18c0-18 9-28 24-28s24 10 24 28v18c-8 7-16 12-24 16-8-4-16-9-24-16Z" fill="#102b68"/><path d="M101 171v-14c0-7 4-11 11-11s11 4 11 11v14l-11 9Z" fill="#fff"/>
-      <text x="222" y="100" font-family="Arial, Helvetica, sans-serif" font-size="61" font-weight="700" letter-spacing="-2.3" fill="#f7faff">FamilyGuard</text>
-      <text x="222" y="163" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700" letter-spacing="-1.8" fill="url(#fgIntelligence)">Intelligence</text>
-      <path d="M225 183H610" stroke="#9cb8e7" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+      <g transform="translate(4 5) scale(.78)">
+        <path d="M112 10 194 43v57c0 51-33 84-82 108-49-24-82-57-82-108V43Z" fill="url(#fgShield)"/>
+        <path d="M112 27 178 53v47c0 40-25 68-66 89-41-21-66-49-66-89V53Z" fill="#f8fbff"/>
+        <circle cx="91" cy="78" r="18" fill="#102b68"/><path d="M60 126c1-23 14-35 31-35s30 12 31 35v27H60Z" fill="#102b68"/>
+        <circle cx="137" cy="82" r="16" fill="#20ad70"/><path d="M119 125c2-20 8-31 18-31 18 0 29 13 30 33v21h-48Z" fill="#20ad70"/>
+        <circle cx="112" cy="119" r="13" fill="#fff"/><path d="M88 169v-18c0-18 9-28 24-28s24 10 24 28v18c-8 7-16 12-24 16-8-4-16-9-24-16Z" fill="#102b68"/><path d="M101 171v-14c0-7 4-11 11-11s11 4 11 11v14l-11 9Z" fill="#fff"/>
+      </g>
+      <text x="190" y="78" font-family="Arial, Helvetica, sans-serif" font-size="53" font-weight="700" letter-spacing="-2" fill="#f7faff">FamilyGuard</text>
+      <text x="190" y="132" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" letter-spacing="-1.5" fill="url(#fgIntelligence)">Intelligence</text>
+      <path d="M192 151H510" stroke="#9cb8e7" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
     </svg>
     <div class="participation-gate-mark" aria-hidden="true">✓</div>
     <h1 id="participationGateTitle">Checking your participation status…</h1>
-    <p id="participationGateMessage">Please wait while we securely check whether a response has already been submitted from this internet connection.</p>
+    <p id="participationGateMessage">We’re checking your participation.</p>
     <button type="button" id="participationRetryBtn" class="btn btn-primary hidden">Try again</button>
   </div>
 </div>

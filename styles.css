@@ -761,3 +761,7 @@ body.participation-checking .participation-gate-card > p:not(.participation-gate
   body.participation-checking .participation-gate-card h1::after { margin-top: 9px; }
   body.participation-checking .participation-gate-card > p:not(.participation-gate-kicker) { margin-top: 9px; font-size: 13px; }
 }
+
+/* Participation status logo: balanced lockup with clear space between shield and wordmark. */
+body.participation-checking .participation-gate-logo{width:min(100%,360px)!important;height:auto!important;max-height:none!important;object-fit:contain!important;overflow:visible!important;margin:0 auto 18px!important;filter:drop-shadow(0 5px 14px rgba(0,0,0,.12))!important}
+@media(max-width:700px){body.participation-checking .participation-gate-logo{width:min(100%,300px)!important;margin-bottom:15px!important}}

@@ -7,7 +7,6 @@ const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelance
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
-if(surveyTestToken)document.getElementById("ownerTestBanner")?.classList.remove("hidden");
 
 // Verify participation with the server before exposing the questionnaire. The backend
 // remains authoritative and also rejects duplicate POSTs to /api/responses.
@@ -32,6 +31,7 @@ function getSurveyTestToken(){
   }catch{return ""}
 }
 const surveyTestToken=getSurveyTestToken();
+if(surveyTestToken)document.getElementById("ownerTestBanner")?.classList.remove("hidden");
 function apiHeaders(extra={}){const headers={...extra};if(surveyTestToken)headers["X-Survey-Test-Token"]=surveyTestToken;return headers}
 function hasLocalCompletion(){try{return localStorage.getItem(LOCAL_COMPLETION_KEY)==="1"||localStorage.getItem("familyguard-survey-completed-device-v2")==="1"}catch{return false}}
 function markLocalCompletion(){try{localStorage.setItem(LOCAL_COMPLETION_KEY,"1");localStorage.setItem("familyguard-survey-completed-device-v2","1")}catch{/* Server-side duplicate protection remains active. */}}
@@ -51,10 +51,14 @@ async function verifyParticipation(){
   // A confirmed completion on this browser takes precedence if the network IP changes.
   // The shared server-side table remains authoritative across devices and browsers.
   if(hasLocalCompletion()){showCompletedPage();return;}
-  showParticipationGate("Checking your participation status…","Please wait while we securely check whether a response has already been submitted.");
+  showParticipationGate("Just a moment…","We’re checking your participation.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
-    const response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:apiHeaders({"Accept":"application/json"})});
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),8000);
+    let response;
+    try{response=await fetch("/api/participation-status",{method:"GET",cache:"no-store",headers:apiHeaders({"Accept":"application/json"}),signal:controller.signal});}
+    finally{clearTimeout(timeout)}
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||"We could not verify your participation status.");
     if(result.participated){
