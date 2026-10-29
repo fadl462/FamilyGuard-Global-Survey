@@ -14,13 +14,10 @@ body[data-theme="dark"] .error { color: #ff9b9b; }
 body[data-theme="dark"] .insight strong { color: var(--ink); }
 body[data-theme="dark"] .bar-row:hover .bar-label { color: var(--teal); }
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""><style>body[data-theme="dark"] #countryMap{background:#101b34}
-/* Leaflet tile/layout hardening: global dashboard styles must never resize map tiles. */
-#countryMap{position:relative;isolation:isolate;min-height:285px;height:285px;width:100%;overflow:hidden;background:#101b34!important}
+/* Leaflet map container only. Keep Leaflet's own pane and tile positioning intact;
+   overriding pane positions or forcing tile dimensions breaks map layout. */
+#countryMap{position:relative;isolation:isolate;min-height:285px;height:285px;width:100%;overflow:hidden;background:#101b34}
 #countryMap.leaflet-container{font:12px/1.5 Inter,system-ui,sans-serif;overflow:hidden}
-#countryMap .leaflet-pane,#countryMap .leaflet-map-pane,#countryMap .leaflet-tile-pane,#countryMap .leaflet-overlay-pane,#countryMap .leaflet-marker-pane,#countryMap .leaflet-tooltip-pane,#countryMap .leaflet-popup-pane{position:absolute;left:0;top:0}
-#countryMap .leaflet-tile-container{position:absolute;left:0;top:0;white-space:nowrap}
-#countryMap .leaflet-tile{width:256px!important;height:256px!important;max-width:none!important;max-height:none!important;border:0!important;padding:0!important;margin:0!important;box-shadow:none!important;object-fit:initial!important}
-#countryMap img{max-width:none!important;max-height:none!important}
 #countryMap .heat-spot{width:100%;height:100%;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,38,61,.98) 0%,rgba(255,143,28,.92) 18%,rgba(255,232,60,.82) 31%,rgba(52,219,220,.62) 47%,rgba(69,101,255,.28) 64%,rgba(69,101,255,0) 75%);mix-blend-mode:screen}
 #countryMap .leaflet-control-zoom a{background:var(--surface);color:var(--ink);border-color:var(--line)}
 </style></head><body><header class="top"><div class="brand" aria-label="FamilyGuard Intelligence"><svg class="brand-mark" viewBox="0 0 40 44" aria-hidden="true"><path d="M20 2.5 35 8v12.2c0 9.2-5.7 16.2-15 21.2C10.7 36.4 5 29.4 5 20.2V8Z" fill="none" stroke="#20cfe0" stroke-width="2.6" stroke-linejoin="round"/><path d="m12.5 21 5 5 10.5-11" fill="none" stroke="#20cfe0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Family<span style="color:#20cfe0">Guard</span><div class="brand-copy"><small>INTELLIGENCE</small></div></div></div><div class="topright">Global family safety study&nbsp; · &nbsp;Secure admin</div></header>
@@ -53,7 +50,7 @@ function renderReachMap(entries,total){
    reachMap=L.map(el,{scrollWheelZoom:false,worldCopyJump:true,zoomControl:true,preferCanvas:true}).setView([18,0],2);
    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{minZoom:1,maxZoom:6,noWrap:true,attribution:'&copy; OpenStreetMap contributors',keepBuffer:3}).addTo(reachMap);
    // Recalculate after layout, theme changes, and responsive panel resizing.
-   const resizeMap=()=>{if(reachMap){reachMap.invalidateSize({pan:false});if(!document.getElementById('countryFilter').value)reachMap.setView([18,0],2,{animate:false});}};
+   const resizeMap=()=>{if(reachMap){reachMap.invalidateSize({pan:false, debounceMoveend:true});}};
    if(window.ResizeObserver){new ResizeObserver(()=>reachMap&&reachMap.invalidateSize({pan:false})).observe(el);}
    window.addEventListener('resize',()=>setTimeout(()=>reachMap&&reachMap.invalidateSize({pan:false}),100));
    document.querySelectorAll('.theme-toggle, #themeToggle').forEach(b=>b.addEventListener('click',()=>setTimeout(resizeMap,180)));
@@ -75,7 +72,7 @@ function renderReachMap(entries,total){
  // Keep a true world view so the map never zooms into and clips West Africa.
  reachMap.setMinZoom(1); reachMap.setMaxZoom(6);
  reachMap.setView([18,0],2,{animate:false});
- setTimeout(()=>reachMap&&reachMap.invalidateSize({pan:false}),80);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>reachMap&&reachMap.invalidateSize({pan:false})));
  const unplotted=entries.filter(([country])=>!countryCoords[country]);
  document.getElementById('countryMapNote').textContent=unplotted.length?`Map shows ${entries.length-unplotted.length} of ${entries.length} countries; locations are not configured for: ${unplotted.map(x=>x[0]).join(', ')}. Country-level data only.`:'Country-level response heat map. Hotspot intensity represents country totals, not individual respondent locations.';
 }
