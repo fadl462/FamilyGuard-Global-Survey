@@ -1,15 +1,13 @@
-FamilyGuard Global Survey — email notification removal
+FAMILYGUARD FREELANCER TEST PREVIEW PATCH
 
-Replace these three files at the same paths in the GitHub repository:
-- functions/api/responses.js
-- functions/api/report-subscribers.js
-- functions/api/tester-interest.js
+Replace these three files at the project root: index.html, app.js, language.js.
 
-These versions save records to D1 and do not send email notifications.
-The admin dashboard remains the place to review submissions.
+Behavior: an authorized owner test session (URL fragment #test=YOUR_TOKEN) now automatically displays the Freelancer contest edition even if the source query string is absent. The TEST MODE ACTIVE banner remains visible because it is still controlled by the owner test token. Test submissions continue to use the existing test-token API header and do not alter duplicate-protection logic.
 
-Optional cleanup:
-- You may delete functions/_shared/notify.js from the repository; it is no longer imported.
-- In Cloudflare Pages > Settings > Variables and Secrets, you may remove RESEND_API_KEY and NOTIFICATION_FROM if they were added only for these notifications.
+Contest reward text updated to one randomly selected eligible participant receiving US$10.
 
-Important: this ZIP is based on the source ZIP provided on 27 October 2026. That source ZIP already does not contain the gender question or testing-banner implementation visible in earlier screenshots. This update intentionally does not invent those missing parts or alter pricing/multilingual files.
+Verification URL format:
+https://familyguard-global-survey.pages.dev/?source=freelancer-contest#test=YOUR_TOKEN
+The owner test URL without ?source=freelancer-contest should now also display the Freelancer edition. Keep YOUR_TOKEN private.
+
+No database schema, survey questions, or server-side response/duplicate-protection files were changed.

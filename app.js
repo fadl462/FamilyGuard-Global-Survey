@@ -2,7 +2,7 @@ const steps=[...document.querySelectorAll(".survey-step")], indicators=[...docum
 const titleList=["About you","Your concerns","Current tools","Product concept","Pricing","Final thoughts"];
 const subtitles=["Let’s start with a few questions about you and your family.","Help us understand the online safety issues that matter to you.","Tell us what you currently use and how well it works.","Explore a possible approach to family digital safety.","Help us understand what feels fair and valuable.","One final thought before you submit."];
 const params=new URLSearchParams(window.location.search);
-const isFreelancerContest=params.get("source")==="freelancer-contest";
+const isFreelancerContest=params.get("source")==="freelancer-contest"||Boolean(surveyTestToken);
 const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelancer-contest":"-standard");
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
