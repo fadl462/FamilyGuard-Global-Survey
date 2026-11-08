@@ -2,6 +2,8 @@ const steps=[...document.querySelectorAll(".survey-step")], indicators=[...docum
 const titleList=["About you","Your concerns","Current tools","Product concept","Pricing","Final thoughts"];
 const subtitles=["Let’s start with a few questions about you and your family.","Help us understand the online safety issues that matter to you.","Tell us what you currently use and how well it works.","Explore a possible approach to family digital safety.","Help us understand what feels fair and valuable.","One final thought before you submit."];
 const params=new URLSearchParams(window.location.search);
+const isFreelancerContest=params.get("source")==="freelancer-contest";
+const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelancer-contest":"-standard");
 let current=0; const form=document.getElementById("surveyForm"), notice=document.getElementById("notice");
 const $=id=>document.getElementById(id);
 const startSurveyBtn=document.getElementById("startSurveyBtn");
@@ -33,9 +35,6 @@ function getSurveyTestToken(){
   }catch{return ""}
 }
 const surveyTestToken=getSurveyTestToken();
-// An authorised owner test session must preview the Freelancer participant experience.
-const isFreelancerContest=params.get("source")==="freelancer-contest"||Boolean(surveyTestToken);
-const STATE_KEY="familyguard-survey-session-v2"+(isFreelancerContest?"-freelancer-contest":"-standard");
 if(surveyTestToken)document.getElementById("ownerTestBanner")?.classList.remove("hidden");
 function apiHeaders(extra={}){const headers={...extra};if(surveyTestToken)headers["X-Survey-Test-Token"]=surveyTestToken;return headers}
 function hasLocalCompletion(){try{return localStorage.getItem(LOCAL_COMPLETION_KEY)==="1"||localStorage.getItem("familyguard-survey-completed-device-v2")==="1"}catch{return false}}
@@ -53,9 +52,19 @@ function showParticipationGate(title,message,showRetry=false){
   document.body.classList.remove("participation-verified");
 }
 async function verifyParticipation(){
+  // Owner-authorised test sessions must be able to preview the full participant journey,
+  // even when the owner has previously completed the public survey from this device/IP.
+  // The test token is still sent on submission and must be validated by the server.
+  if(surveyTestToken){
+    participationVerified=true;
+    document.body.classList.remove("participation-checking");
+    document.body.classList.add("participation-verified");
+    participationGate?.classList.add("hidden");
+    return;
+  }
   // A confirmed completion on this browser takes precedence if the network IP changes.
   // The shared server-side table remains authoritative across devices and browsers.
-  if(!surveyTestToken && hasLocalCompletion()){showCompletedPage();return;}
+  if(hasLocalCompletion()){showCompletedPage();return;}
   showParticipationGate("Just a moment…","We’re checking your participation.");
   if(participationRetryBtn)participationRetryBtn.disabled=true;
   try{
