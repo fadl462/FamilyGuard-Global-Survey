@@ -1,0 +1,55 @@
+FAMILYGUARD DATA QUALITY MANAGEMENT PATCH
+==========================================
+
+Files in this patch:
+- admin-export.html
+- functions/api/admin/export.js
+- functions/api/admin/quality.js
+- data-quality-migration.sql
+
+DEPLOY IN THIS ORDER
+
+1. BACK UP FIRST
+   Download a fresh copy of the current D1 survey database/export and keep the
+   existing project ZIP. This patch does not delete or rewrite raw submissions.
+
+2. APPLY THE D1 MIGRATION BEFORE DEPLOYING
+   Cloudflare Dashboard -> Storage & databases -> D1 -> familyguard-survey-db
+   -> Console. Paste and execute the complete contents of
+   data-quality-migration.sql.
+
+   The migration only creates two new tables:
+   - data_quality_reviews
+   - data_quality_audit
+   It does not alter survey_responses, report_subscribers or
+   tester_interest_contacts.
+
+3. REPLACE THE FILES
+   Copy the four code/data files above into the same relative paths in the
+   project, replacing the existing files where applicable.
+
+4. DEPLOY THE UPDATED PAGES PROJECT
+   Keep the existing DB binding and ADMIN_TOKEN secret unchanged.
+
+5. VERIFY
+   - Open /admin-export and authenticate as usual.
+   - Refresh data. The new Data quality management section should load.
+   - Search for dilupanb@gmail.com and select Testing-interest contacts.
+   - Choose "Flag for review", enter a factual reason, and Save.
+   - Confirm it appears as flagged after refresh.
+   - Only mark it "Exclude" if you have a defensible reason.
+   - Excluding a survey response removes it from dashboard summaries,
+     charts, filters and interpretations. It remains in the raw D1 table
+     and the ordinary raw survey CSV export.
+   - Marking a record "Valid" restores it to the dashboard.
+
+IMPORTANT BEHAVIOUR
+- No record is automatically excluded based only on an unfamiliar email.
+- The supplied email is a Testing Interest contact, not a survey response;
+  flagging/excluding it affects the testing-interest contact count, not the
+  survey response count.
+- Status changes and reasons are appended to data_quality_audit.
+- Contact exports now include their record IDs so admin review statuses can
+  be linked to the correct contact.
+- If the migration is not applied, the dashboard's existing survey data can
+  still load, but the quality-management section will be unavailable.

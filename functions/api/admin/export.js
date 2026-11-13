@@ -18,8 +18,8 @@ export async function onRequestGet({request, env}) {
     if (["report", "testers"].includes(kind)) {
       const table = kind === "report" ? "report_subscribers" : "tester_interest_contacts";
       const filename = kind === "report" ? "familyguard-report-subscribers.csv" : "familyguard-testing-interest.csv";
-      const {results=[]} = await env.DB.prepare(`SELECT created_at, email, consent FROM ${table} ORDER BY created_at DESC`).all();
-      return csvResponse([["created_at","email","consent"], ...results.map(r=>[r.created_at,r.email,r.consent])], filename);
+      const {results=[]} = await env.DB.prepare(`SELECT id, created_at, email, consent FROM ${table} ORDER BY created_at DESC`).all();
+      return csvResponse([["id","created_at","email","consent"], ...results.map(r=>[r.id,r.created_at,r.email,r.consent])], filename);
     }
 
     if (kind === "status") {
