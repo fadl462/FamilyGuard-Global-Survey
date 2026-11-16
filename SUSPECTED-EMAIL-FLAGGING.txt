@@ -1,0 +1,14 @@
+SUSPECTED EMAIL FLAGGING UPDATE
+
+The Data Quality Management API now checks loaded survey-response answer JSON, report-subscriber records, and testing-interest records for the following administrator-supplied email addresses:
+- cccc@bbbbbbbb.vom
+- test@check.com.mo
+- fullstackwebdeveloperbd@gmail.com
+- mzz.withwill@gmail.com
+- prtiwiwhyuniasih@gmail.com
+
+When a matching record is found, it is automatically marked "Flag for review" if it does not already have a quality decision. Existing manual decisions are preserved. The action is written to the quality audit log. Matching emails are shown in the quality-management record list so they can be searched and reviewed.
+
+IMPORTANT: These addresses are flagged for human review only. No record is automatically excluded or deleted. Confirm the associated response and its context before excluding it from analysis.
+
+Deployment: replace the existing admin-export.html and functions/api/admin/quality.js with the files in this patch. No new D1 migration is required beyond the Data Quality Management migration already supplied. Then deploy and refresh Data Quality Management using the admin token.
