@@ -1,0 +1,32 @@
+FAMILYGUARD DATA QUALITY MANAGEMENT — FIXED PATCH
+
+Root cause fixed:
+The dashboard script referenced two HTML elements that were absent:
+- qualityLoadMessage
+- qualityAudit
+
+Their absence caused a JavaScript error before the quality API request could complete. This patch restores both elements.
+
+Files:
+- admin-export.html
+- functions/api/admin/quality.js
+- data-quality-migration.sql
+
+Deployment:
+1. Back up the D1 database.
+2. In Cloudflare D1 > familyguard-survey-db > Console, execute data-quality-migration.sql.
+   It creates only data_quality_reviews and data_quality_audit. It does not delete or rewrite survey data.
+3. Copy the files into the existing project, preserving their folder paths.
+4. Deploy the updated project to Cloudflare Pages.
+5. Open /admin-export, enter the ADMIN_TOKEN in Data management, and click Refresh quality records.
+
+Expected result:
+- Loaded counts for survey responses, report subscribers and testing-interest contacts.
+- The five administrator-supplied email addresses are matched and flagged for manual review when present in survey answers or contact email fields.
+- Expand "View actual survey responses" to inspect submitted answers.
+- Use the status selector and reason field to mark records Valid, Flag for review or Excluded.
+- Audit history appears below the record list.
+
+Important:
+No suspected record is automatically excluded. Review actual answers first.
+The API expects the Cloudflare Pages D1 binding named DB and the ADMIN_TOKEN secret.
