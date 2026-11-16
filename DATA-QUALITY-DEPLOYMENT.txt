@@ -1,55 +1,79 @@
-FAMILYGUARD DATA QUALITY MANAGEMENT PATCH
-==========================================
+FAMILYGUARD DATA QUALITY MANAGEMENT — IMPLEMENTATION UPDATE
+===========================================================
 
-Files in this patch:
-- admin-export.html
-- functions/api/admin/export.js
-- functions/api/admin/quality.js
-- data-quality-migration.sql
+WHAT THIS IMPLEMENTATION DOES
+- Loads survey responses, report subscribers and testing-interest contacts
+  through the authenticated /api/admin/quality endpoint.
+- Supports searching by record ID, email, country or date.
+- Supports Valid, Flag for review and Exclude decisions.
+- Requires a factual reason for Flag for review and Exclude.
+- Preserves all original records in their source tables.
+- Excluded records are omitted from dashboard calculations and from the
+  analytical Excel workbook.
+- The underlying raw CSV export endpoints remain unchanged; excluded source
+  records therefore remain available for audit/recovery.
+- Displays recent quality-management actions from the audit table.
+- Gives a clear error in the quality section if authentication, the D1 binding
+  or the migration is missing.
 
 DEPLOY IN THIS ORDER
 
-1. BACK UP FIRST
-   Download a fresh copy of the current D1 survey database/export and keep the
-   existing project ZIP. This patch does not delete or rewrite raw submissions.
+1. BACK UP
+   Keep this ZIP and download a fresh copy of the current D1 database/export.
 
-2. APPLY THE D1 MIGRATION BEFORE DEPLOYING
+2. APPLY THE ADDITIVE D1 MIGRATION
    Cloudflare Dashboard -> Storage & databases -> D1 -> familyguard-survey-db
-   -> Console. Paste and execute the complete contents of
-   data-quality-migration.sql.
+   -> Console. Execute the complete data-quality-migration.sql file.
 
-   The migration only creates two new tables:
+   It creates only:
    - data_quality_reviews
    - data_quality_audit
-   It does not alter survey_responses, report_subscribers or
-   tester_interest_contacts.
 
-3. REPLACE THE FILES
-   Copy the four code/data files above into the same relative paths in the
-   project, replacing the existing files where applicable.
+   It does not alter or delete survey_responses, report_subscribers or
+   tester_interest_contacts. Run it against the same D1 database bound to
+   the Pages project as DB.
 
-4. DEPLOY THE UPDATED PAGES PROJECT
-   Keep the existing DB binding and ADMIN_TOKEN secret unchanged.
+3. DEPLOY THE UPDATED PROJECT
+   Deploy the project files in this ZIP. Keep the existing DB binding and
+   ADMIN_TOKEN production secret unchanged.
 
-5. VERIFY
-   - Open /admin-export and authenticate as usual.
-   - Refresh data. The new Data quality management section should load.
-   - Search for dilupanb@gmail.com and select Testing-interest contacts.
-   - Choose "Flag for review", enter a factual reason, and Save.
-   - Confirm it appears as flagged after refresh.
-   - Only mark it "Exclude" if you have a defensible reason.
-   - Excluding a survey response removes it from dashboard summaries,
-     charts, filters and interpretations. It remains in the raw D1 table
-     and the ordinary raw survey CSV export.
-   - Marking a record "Valid" restores it to the dashboard.
+4. VERIFY AUTHENTICATION AND LOADING
+   - Open /admin-export.
+   - Enter the existing admin token in Data management.
+   - Select Refresh data, or use Refresh quality records in the quality panel.
+   - Confirm that the quality panel reports loaded counts for all three
+     record types and displays the record table.
+   - If the panel reports 401, check the production ADMIN_TOKEN.
+   - If it reports 503 / migration not ready, confirm the migration was
+     executed on the correct D1 database and that the Pages DB binding is DB.
 
-IMPORTANT BEHAVIOUR
-- No record is automatically excluded based only on an unfamiliar email.
-- The supplied email is a Testing Interest contact, not a survey response;
-  flagging/excluding it affects the testing-interest contact count, not the
-  survey response count.
-- Status changes and reasons are appended to data_quality_audit.
-- Contact exports now include their record IDs so admin review statuses can
-  be linked to the correct contact.
-- If the migration is not applied, the dashboard's existing survey data can
-  still load, but the quality-management section will be unavailable.
+5. TEST A CONTACT RECORD
+   - Search for dilupanb@gmail.com.
+   - Select Testing-interest contacts.
+   - Choose Flag for review and enter a factual reason.
+   - Save, refresh, and confirm the status and audit entry persist.
+   - Do not exclude solely because an email is unfamiliar or unusual.
+
+6. TEST EXCLUSION SAFELY
+   - Use a known test record, not a genuine response you intend to retain.
+   - Exclude it with a documented reason.
+   - Confirm dashboard totals/charts and the analytical Excel workbook omit it.
+   - Confirm the record remains in its original D1 table and in the raw CSV.
+   - Restore it to Valid and confirm it returns to dashboard analysis.
+
+STATUS DEFINITIONS
+- Valid: explicitly reviewed and included.
+- Flag for review: retained in analysis until an administrator decides otherwise.
+- Excluded: preserved in the raw database but omitted from dashboard analysis
+  and the analytical Excel workbook.
+- Not yet reviewed: no quality decision has been recorded.
+
+IMPORTANT
+- A suspicious-looking email is a review signal, not proof of a false response.
+- Survey responses, report subscriptions and tester-interest contacts are
+  managed independently. Excluding a contact does not remove a survey response.
+- Every status change is appended to data_quality_audit. The panel shows the
+  latest 100 audit entries.
+- The quality endpoint loads up to 1,000 records of each type per request.
+  If the project grows beyond that, pagination should be added before the
+  record count reaches that limit.
